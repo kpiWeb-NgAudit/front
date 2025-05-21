@@ -9,11 +9,12 @@ function HomePage() {
     const [error, setError] = useState(null);
 
     const fetchFacts = useCallback(async () => {
+        // ... (same fetchFacts logic) ...
         try {
             setLoading(true);
             setError(null);
             const data = await getAllFacts();
-            setFacts(data || []); // Ensure facts is an array even if API returns null/undefined
+            setFacts(data || []);
         } catch (err) {
             setError(err);
             console.error("Failed to fetch facts:", err);
@@ -27,21 +28,32 @@ function HomePage() {
     }, [fetchFacts]);
 
     const handleDeleteFact = async (id) => {
+        // ... (same handleDeleteFact logic) ...
         try {
             await apiDeleteFact(id);
+            // Optimistic update or re-fetch
             setFacts(prevFacts => prevFacts.filter(fact => fact.factIdPk !== id));
-            // Could add a success notification here
+            // Or call fetchFacts();
         } catch (err) {
             console.error("Failed to delete fact:", err);
-            // Could add an error notification here
             alert(`Error deleting fact: ${err.response?.data?.message || err.message}`);
         }
     };
 
+    const handleFactsAdded = useCallback(() => {
+        fetchFacts(); // Re-fetch the list when new facts are added via paste
+    }, [fetchFacts]);
+
     return (
         <div>
             <h1>Facts Management</h1>
-            <FactList facts={facts} onDelete={handleDeleteFact} loading={loading} error={error} />
+            <FactList
+                facts={facts}
+                onDelete={handleDeleteFact}
+                loading={loading}
+                error={error}
+                onFactsAdded={handleFactsAdded} // Pass the callback
+            />
         </div>
     );
 }

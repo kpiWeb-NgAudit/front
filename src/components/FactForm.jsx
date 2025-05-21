@@ -14,11 +14,11 @@ const FactForm = ({ onSubmit, initialData = {}, isEditMode = false }) => {
     const [formData, setFormData] = useState({
         factTname: '',
         factType: '',
-        factdbextrIdPk: '', // Keep as string for input, convert to number on submit if needed
-        factProccube: 'FPROCY', // Default and often fixed
+        factdbextrIdPk: '',
+        factProccube: 'FPROCY',
         factShortcubename: '',
         factShortpresname: '',
-        factWorkorder: '', // Keep as string for input
+        factWorkorder: '',
         customerCubeIdPk: '',
         factFactdatafiletype: '',
         factFactdatafilename: '',
@@ -26,19 +26,19 @@ const FactForm = ({ onSubmit, initialData = {}, isEditMode = false }) => {
         factZonespe: '',
         factComments: '',
         factPartitiontype: '',
-        // factLastupdate & factTimestamp are not part of the form
+
     });
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (isEditMode && initialData) {
-            // Ensure all fields expected by form are present, even if null/undefined from API
+
             const populatedData = { ...formData, ...initialData };
 
-            // Convert potential nulls from backend to empty strings for controlled inputs
+
             for (const key in populatedData) {
                 if (populatedData[key] === null || typeof populatedData[key] === 'undefined') {
-                    if (key === 'factFactdatafilecheckunicity') { // boolean
+                    if (key === 'factFactdatafilecheckunicity') {
                         populatedData[key] = false;
                     } else {
                         populatedData[key] = '';
@@ -46,14 +46,14 @@ const FactForm = ({ onSubmit, initialData = {}, isEditMode = false }) => {
                 } else if (typeof populatedData[key] === 'number' && key !== 'factdbextrIdPk' && key !== 'factWorkorder') {
                     // Keep numbers as numbers unless they are IDs that might be optional strings in form
                 } else if (key === 'factdbextrIdPk' || key === 'factWorkorder') {
-                    populatedData[key] = String(populatedData[key]); // Convert numbers to strings for input fields
+                    populatedData[key] = String(populatedData[key]);
                 }
             }
-            // factProccube should always be FPROCY on edit based on DTO
+
             populatedData.factProccube = initialData.factProccube || 'FPROCY';
             setFormData(populatedData);
         } else if (!isEditMode) {
-            // For create mode, ensure defaults like factProccube are set
+
             setFormData(prev => ({ ...prev, factProccube: 'FPROCY' }));
         }
     }, [initialData, isEditMode]);
@@ -104,32 +104,27 @@ const FactForm = ({ onSubmit, initialData = {}, isEditMode = false }) => {
 
         const submissionData = { ...formData };
 
-        // Convert specific fields to numbers or handle optionals
+
         submissionData.factWorkorder = parseInt(formData.factWorkorder, 10);
         submissionData.factdbextrIdPk = formData.factdbextrIdPk ? parseInt(formData.factdbextrIdPk, 10) : null;
 
-        // Ensure optional enums are null if empty string
+
         if (!submissionData.factFactdatafiletype) submissionData.factFactdatafiletype = null;
 
-        // factFactdatafilecheckunicity is boolean, already handled by checkbox
-        // factComments can be empty string or null, backend DTO handles @Size for max text length
-
-        // Remove fields not in Create/Update DTOs (if any were added to local state by mistake)
-        // e.g., if factIdPk was somehow included in formData for create
         if (!isEditMode) {
-            delete submissionData.factIdPk; // Should not be there anyway for create
+            delete submissionData.factIdPk;
         }
-        // For update, factIdPk is in URL, not body. Backend doesn't expect factLastupdate/factTimestamp
+
         delete submissionData.factLastupdate;
         delete submissionData.factTimestamp;
 
 
         try {
             await onSubmit(submissionData);
-            // Navigation or success message handled by parent component
+
         } catch (error) {
             console.error("Submission error:", error.response?.data || error.message);
-            const apiErrors = error.response?.data?.errors || {}; // Assuming Spring validation errors are in 'errors'
+            const apiErrors = error.response?.data?.errors || {};
             if (error.response?.data && typeof error.response.data === 'string') {
                 setErrors(prev => ({ ...prev, form: error.response.data }));
             } else if (error.response?.data?.message) { // General error message

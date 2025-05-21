@@ -1,4 +1,3 @@
-// src/pages/AddFactPage.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import FactForm from '../components/FactForm';
@@ -10,12 +9,11 @@ function AddFactPage() {
     const handleAddFact = async (factData) => {
         try {
             await createFact(factData);
-            navigate('/'); // Navigate to list page on success
-            // Could add a success notification here
+            navigate('/');
         } catch (error) {
             console.error('Failed to create fact:', error);
             alert(`Error creating fact: ${error.response?.data?.message || error.message}`);
-            throw error; // Re-throw to allow FactForm to handle field-specific errors if needed
+            throw error;
         }
     };
 

@@ -1,4 +1,3 @@
-// src/pages/EditFactPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import FactForm from '../components/FactForm';
@@ -31,12 +30,11 @@ function EditFactPage() {
     const handleUpdateFact = async (factData) => {
         try {
             await updateFact(Number(id), factData);
-            navigate('/'); // Navigate to list page on success
-            // Could add a success notification here
+            navigate('/');
         } catch (error) {
             console.error('Failed to update fact:', error);
             alert(`Error updating fact: ${error.response?.data?.message || error.message}`);
-            throw error; // Re-throw for FactForm
+            throw error;
         }
     };
 

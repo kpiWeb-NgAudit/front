@@ -1,21 +1,16 @@
-/* src/components/FactList.css or add to index.css */
-
 .selectable-table {
-    user-select: none; /* Prevents text selection interference */
-    /* border-collapse: collapse; /* Already in index.css but good to have here for component context */
+    user-select: none;
 }
 
 .selectable-table td {
-    /* padding: 8px; /* From index.css */
-    /* border: 1px solid #ddd; /* From index.css */
-    cursor: cell; /* Indicate cells are interactive */
+    cursor: cell;
 }
 
 .selectable-table td.selected-cell {
-    background-color: #d0e0f0 !important; /* Light blue selection, use !important if needed to override other styles */
-    /* outline: 1px solid #007bff; */ /* Alternative styling */
+    background-color: #d0e0f0 !important;
+
 }
 
-.selectable-table .actions button { /* Ensure buttons in actions cell don't get cell cursor */
+.selectable-table .actions button {
     cursor: pointer;
 }
