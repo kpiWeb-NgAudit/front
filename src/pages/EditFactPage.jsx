@@ -19,7 +19,7 @@ function EditFactPage() {
                 setFact(data);
             } catch (err) {
                 setError(err);
-                console.error("Failed to fetch fact for editing:", err);
+                console.error("Impossible de récupérer les fact pour les éditer:", err);
             } finally {
                 setLoading(false);
             }
@@ -32,8 +32,8 @@ function EditFactPage() {
             await updateFact(Number(id), factData);
             navigate('/');
         } catch (error) {
-            console.error('Failed to update fact:', error);
-            alert(`Error updating fact: ${error.response?.data?.message || error.message}`);
+            console.error('Impossible de mettre à jour le fact:', error);
+            alert(`Erreur lors de la mise à jour du fact: ${error.response?.data?.message || error.message}`);
             throw error;
         }
     };

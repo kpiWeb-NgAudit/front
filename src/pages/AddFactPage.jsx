@@ -11,8 +11,8 @@ function AddFactPage() {
             await createFact(factData);
             navigate('/');
         } catch (error) {
-            console.error('Failed to create fact:', error);
-            alert(`Error creating fact: ${error.response?.data?.message || error.message}`);
+            console.error('Impossible de créer un fact:', error);
+            alert(`Erreur lors de la création du fact: ${error.response?.data?.message || error.message}`);
             throw error;
         }
     };

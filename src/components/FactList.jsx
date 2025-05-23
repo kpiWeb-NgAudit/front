@@ -30,6 +30,7 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
     const [isMouseDown, setIsMouseDown] = useState(false);
     const tableRef = useRef(null);
     const [isPasting, setIsPasting] = useState(false); // Feedback for paste operation
+    const [showPasteInfo, setShowPasteInfo] = useState(false); // State for info popover visibility
 
 
 
@@ -119,8 +120,8 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
             await navigator.clipboard.writeText(clipboardText);
             if (eventSource === 'button') alert(`Copied ${selectedCells.size} cells!`);
         } catch (err) {
-            console.error('Copy failed:', err);
-            if (eventSource === 'button') alert('Copy failed. Check console.');
+            console.error('Échec de la copie:', err);
+            if (eventSource === 'button') alert('Échec de la copie. Vérifiez la console.');
         }
     }, [selectedCells, facts]);
 
@@ -138,15 +139,37 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
     }, [selectedCells, handleCopySelected]);
 
 
+    const pasteInfoContent = (
+        <div className="paste-info-popover">
+            <h4>Comment utiliser " Coller les Tech Names pour créer":</h4>
+            <ol>
+                <li>Préparez une liste de "Technical Names" dans une seule colonne dans Excel ou un éditeur de texte (un nom par ligne).</li>
+                <li>Copiez cette colonne/liste dans votre presse-papiers (Ctrl+C ou Cmd+C).</li>
+                <li>Cliquez sur le bouton "Coller les Tech Names à créer" button.</li>
+                <li>Confirmer l'opération .</li>
+            </ol>
+            <p>
+                De nouveaux "Facts" seront créés avec ces Technical Names.
+                D'autres champs utiliseront des valeurs par défaut prédéfinies (par exemple, Customer ID: {DEFAULT_PASTE_PAYLOAD_BASE.customerCubeIdPk}).
+            </p>
+            <p>
+                <strong>Note:</strong> Si un Technical Name existe déjà pour le customer par défaut, cet élément ne sera pas recréé et sera signalé comme un échec.
+                Assurez-vous que chaque Technical Name collé comporte 20 caractères maximum.
+            </p>
+            <button onClick={() => setShowPasteInfo(false)} style={{marginTop: '10px'}}>Close</button>
+        </div>
+    );
+
+
 
     const handlePasteTechNames = async () => {
         const defaultCustomer = DEFAULT_PASTE_PAYLOAD_BASE.customerCubeIdPk;
         const userConfirmation = window.confirm(
-            `This will attempt to create new facts using 'Tech Names' from your clipboard. ` +
-            `Other fields will use predefined defaults.\n\n` +
-            `IMPORTANT: The Customer ID used will be '${defaultCustomer}'. ` +
-            `Ensure this customer EXISTS in the database.\n\n` +
-            `Do you want to proceed?`
+            `Cela tentera de créer de nouveaux facts utilisant des 'Tech Names' à partir de votre clipboard. ` +
+            `D'autres champs utiliseront des valeurs par défaut prédéfinies.\n\n` +
+            `IMPORTANT: Le Customer ID utilisé sera '${defaultCustomer}'. ` +
+            `Assurez-vous que ce customer EXISTE dans la base de données.\n\n` +
+            `Voulez-vous continuer ?`
         );
         if (!userConfirmation) return;
 
@@ -155,8 +178,8 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
         try {
             pastedText = await navigator.clipboard.readText();
         } catch (err) {
-            console.error("Failed to read clipboard:", err);
-            alert("Could not read from clipboard. Ensure permission and secure context (HTTPS/localhost).");
+            console.error("Échec de la lecture clipboard:", err);
+            alert("Impossible de lire depuis le clipboard. Vérifiez les autorisations et le contexte sécurisé (HTTPS/localhost).");
             setIsPasting(false);
             return;
         }
@@ -166,20 +189,20 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
             .filter(line => line.length > 0);
 
         if (lines.length === 0) {
-            alert("No valid 'Tech Names' found in the first column of pasted text.");
+            alert("Aucun 'Tech Names' valide n'a été trouvé dans la première colonne du texte collé.");
             setIsPasting(false);
             return;
         }
 
         const uniqueTechNamesInBatch = Array.from(new Set(lines));
         if (uniqueTechNamesInBatch.length < lines.length) {
-            alert(`Note: ${lines.length - uniqueTechNamesInBatch.length} duplicate Tech Names were found in your paste and only unique ones will be processed for this batch.`);
+            alert(`Note: ${lines.length - uniqueTechNamesInBatch.length} des Tech Names en double ont été trouvés dans votre pâte et seuls les noms uniques seront traités pour ce lot.`);
         }
 
         const results = { succeeded: [], failed: [] };
         for (const techName of uniqueTechNamesInBatch) {
             if (techName.length > 20) {
-                results.failed.push({ name: techName, error: 'Tech Name exceeds 20 characters.' });
+                results.failed.push({ name: techName, error: 'Le Tech Name dépasse 20 caractères' });
                 continue;
             }
 
@@ -206,23 +229,23 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
 
         let feedbackMessage = "";
         if (successCount > 0) {
-            feedbackMessage += `${successCount} fact(s) created successfully.\n`;
+            feedbackMessage += `${successCount} fact(s) créé(s) avec succès.\n`;
             if (onFactsAdded) onFactsAdded();
         }
          if (skippedCount > 0) {
-             feedbackMessage += `${skippedCount} fact(s) were already existing and were skipped.\n`;
+             feedbackMessage += `${skippedCount} fact(s) existaient déjà et ont été ignorés.\n`;
          }
         if (failureCount > 0) {
-            feedbackMessage += `${failureCount} fact(s) failed to create (often due to already existing or other data issues).\n`;
-            feedbackMessage += `Please check the browser console for detailed errors for each failed item.\n\nFailed items:\n`;
+            feedbackMessage += `${failureCount} fact(s) non créé(s) (souvent en raison de problèmes de données déjà existants ou autres).\n`;
+            feedbackMessage += `Veuillez vérifier la console du navigateur pour connaître les erreurs détaillées pour chaque élément ayant échoué..\n\nElements ayant echoue:\n`;
             results.failed.forEach(fail => {
                 feedbackMessage += `- ${fail.name}: ${fail.error}\n`;
             });
-            console.error("Failed to create some facts from paste:", results.failed);
+            console.error("Impossible de créer certains facts à partir du collage:", results.failed);
         }
 
         if (!feedbackMessage) {
-            feedbackMessage = "Paste processing complete. No new items were created (possibly all duplicates or all failed validation).";
+            feedbackMessage = "Traitement du collage terminé. Aucun nouvel élément n'a été créé (probablement tous des doublons ou des validations échouées).";
         }
         alert(feedbackMessage);
         setIsPasting(false);
@@ -239,8 +262,22 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
                 disabled={isPasting}
                 style={{ marginTop: '10px' }}
             >
-                {isPasting ? 'Pasting...' : 'Paste Tech Names to Create'}
+                {isPasting ? 'Coller...' : 'Collez les Tech Names à créer'}
             </button>
+            <span
+                className="info-icon"
+                onClick={() => setShowPasteInfo(prev => !prev)}
+                title="Comment utiliser la fonction Coller"
+            >
+                {/* Option 1: SVG Icon (simple circle i) */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{ cursor: 'pointer', verticalAlign: 'middle' }}>
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.064.293.006.399.287.47l.45.082.082-.38-.29-.071c-.294-.07-.352-.176-.288-.469l.738-3.468c.064-.293-.006-.399-.287-.47l-.45-.082.082-.38zm.058-3.496a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+                    </svg>
+                {/* Option 2: Character Icon */}
+                {/* ⓘ */}
+                </span>
+            {showPasteInfo && pasteInfoContent}
         </div>
     );
 
@@ -259,14 +296,33 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
                 >
                     Copy Selected ({selectedCells.size})
                 </button>
-                <button
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}> {/* Group button and icon */}
+                    <button
                     className="primary"
                     onClick={handlePasteTechNames}
                     disabled={isPasting}
-                >
-                    {isPasting ? 'Pasting...' : 'Paste Tech Names to Create'}
-                </button>
+                    >
+                    {isPasting ? 'Coller...' : 'Collez les Tech Names à créer'}
+                    </button>
+                        <span
+                            className="info-icon"
+                            onClick={() => setShowPasteInfo(prev => !prev)} // Toggle visibility
+                            title="Comment utiliser la fonction Coller" // Simple hover title
+                            style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                            >
+                            {/* Option 1: SVG Icon (simple circle i) */}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" /* Increased size */
+                                viewBox="0 0 16 16" style={{ verticalAlign: 'middle' }}>
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.064.293.006.399.287.47l.45.082.082-.38-.29-.071c-.294-.07-.352-.176-.288-.469l.738-3.468c.064-.293-.006-.399-.287-.47l-.45-.082.082-.38zm.058-3.496a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
+                            </svg>
+                            {/* Option 2: Character Icon */}
+                            {/* <span style={{ fontSize: '20px', lineHeight: '1' }}>ⓘ</span> */}
+                        </span>
+                </div>
             </div>
+            {/* Conditionally render the popover */}
+            {showPasteInfo && pasteInfoContent}
             <table ref={tableRef} className="selectable-table" tabIndex={0}>
                 <thead>
                 <tr>

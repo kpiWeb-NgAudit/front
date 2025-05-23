@@ -17,7 +17,7 @@ function HomePage() {
             setFacts(data || []);
         } catch (err) {
             setError(err);
-            console.error("Failed to fetch facts:", err);
+            console.error("Impossible de récupérer les facts:", err);
         } finally {
             setLoading(false);
         }
@@ -35,8 +35,8 @@ function HomePage() {
             setFacts(prevFacts => prevFacts.filter(fact => fact.factIdPk !== id));
             // Or call fetchFacts();
         } catch (err) {
-            console.error("Failed to delete fact:", err);
-            alert(`Error deleting fact: ${err.response?.data?.message || err.message}`);
+            console.error("Impossible de supprimer le fact:", err);
+            alert(`Erreur lors de la suppression du fact: ${err.response?.data?.message || err.message}`);
         }
     };
 
