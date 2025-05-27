@@ -288,13 +288,13 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
     return (
         <div>
             <div className="toolbar" style={{ marginBottom: '10px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <button className="primary" onClick={() => navigate('/add')}>Add Fact</button>
+                <button className="primary" onClick={() => navigate('/add')}>Ajouter Fact</button>
                 <button
                     className="secondary"
                     onClick={() => handleCopySelected('button')}
                     disabled={!selectedCells.size || isPasting}
                 >
-                    Copy Selected ({selectedCells.size})
+                    Copier la sélection ({selectedCells.size})
                 </button>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}> {/* Group button and icon */}
                     <button
@@ -346,7 +346,7 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
                             );
                         })}
                         <td className="actions">
-                            <button className="secondary" onClick={() => navigate(`/edit/${fact.factIdPk}`)}>Edit</button>
+                            <button className="secondary" onClick={() => navigate(`/edit/${fact.factIdPk}`)}>Modifier</button>
                             <button
                                 className="danger"
                                 onClick={() => {
@@ -355,7 +355,7 @@ const FactList = ({ facts, onDelete, loading, error, onFactsAdded }) => {
                                     }
                                 }}
                             >
-                                Delete
+                                Supprimer
                             </button>
                         </td>
                     </tr>
