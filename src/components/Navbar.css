@@ -1,0 +1,43 @@
+/* src/components/Navbar.css */
+.app-navbar {
+    background-color: #333; /* Dark background for navbar */
+    padding: 1rem 2rem;   /* Padding around links */
+    margin-bottom: 20px;
+    display: flex;
+    gap: 1.5rem; /* Space between links */
+}
+
+.app-navbar .nav-link {
+    color: #f0f0f0; /* Light text color for links */
+    text-decoration: none;
+    font-size: 1.1em;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.app-navbar .nav-link:hover {
+    color: #ffffff; /* Brighter on hover */
+}
+
+.app-navbar .nav-link.active {
+    color: #007bff; /* Active link color (e.g., blue) */
+    font-weight: bold;
+}
+
+/* Optional: Add a subtle underline effect for active/hover */
+.app-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #007bff;
+    transition: width 0.3s ease;
+}
+
+.app-navbar .nav-link:hover::after,
+.app-navbar .nav-link.active::after {
+    width: 100%;
+}

@@ -1,59 +1,31 @@
-// src/pages/HomePage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import FactList from '../components/FactList';
-import { getAllFacts, deleteFact as apiDeleteFact } from '../api/factService';
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './HomePage.css';
 
 function HomePage() {
-    const [facts, setFacts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    const fetchFacts = useCallback(async () => {
-        // ... (same fetchFacts logic) ...
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await getAllFacts();
-            setFacts(data || []);
-        } catch (err) {
-            setError(err);
-            console.error("Impossible de récupérer les facts:", err);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        fetchFacts();
-    }, [fetchFacts]);
-
-    const handleDeleteFact = async (id) => {
-        // ... (same handleDeleteFact logic) ...
-        try {
-            await apiDeleteFact(id);
-            // Optimistic update or re-fetch
-            setFacts(prevFacts => prevFacts.filter(fact => fact.factIdPk !== id));
-            // Or call fetchFacts();
-        } catch (err) {
-            console.error("Impossible de supprimer le fact:", err);
-            alert(`Erreur lors de la suppression du fact: ${err.response?.data?.message || err.message}`);
-        }
-    };
-
-    const handleFactsAdded = useCallback(() => {
-        fetchFacts(); // Re-fetch the list when new facts are added via paste
-    }, [fetchFacts]);
-
     return (
-        <div>
-            <h1>Facts Management</h1>
-            <FactList
-                facts={facts}
-                onDelete={handleDeleteFact}
-                loading={loading}
-                error={error}
-                onFactsAdded={handleFactsAdded} // Pass the callback
-            />
+        <div className="home-container">
+            <header className="home-header">
+                <h1>Welcome to KPI Web Management</h1>
+                <p>Your central hub for managing Facts and Customers.</p>
+            </header>
+
+            <nav className="home-navigation">
+                <Link to="/facts" className="nav-card">
+                    <div className="nav-card-icon">📊</div> {/* Example Icon */}
+                    <h2>Facts Management</h2>
+                    <p>View, create, edit, and delete Facts.</p>
+                </Link>
+
+                <Link to="/customers" className="nav-card">
+                    <div className="nav-card-icon">👥</div> {/* Example Icon */}
+                    <h2>Customers Management</h2>
+                    <p>Manage customer profiles and configurations.</p>
+                </Link>
+
+                {/* Add more cards here for other sections if needed in the future */}
+            </nav>
         </div>
     );
 }
