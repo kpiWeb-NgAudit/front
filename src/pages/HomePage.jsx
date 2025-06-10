@@ -24,6 +24,12 @@ function HomePage() {
                     <p>Manage customer profiles and configurations.</p>
                 </Link>
 
+                <Link to="/dimensions" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">📏</div> {/* Example Icon */}
+                    <h2>Dimensions Management</h2>
+                    <p>Manage dimension attributes and configurations.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>

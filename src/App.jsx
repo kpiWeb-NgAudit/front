@@ -10,6 +10,11 @@ import EditFactPage from './pages/EditFactPage';
 import CustomerListPage from './pages/CustomerListPage';
 import AddCustomerPage from './pages/AddCustomerPage';
 import EditCustomerPage from './pages/EditCustomerPage';
+
+import DimensionListPage from './pages/DimensionListPage';
+import AddDimensionPage from './pages/AddDimensionPage';
+import EditDimensionPage from './pages/EditDimensionPage';
+
 import NotFoundPage from './pages/NotFoundPage';
 import './index.css'; // Global styles
 import './pages/HomePage.css'; // Import HomePage styles if not already global
@@ -29,6 +34,11 @@ function App() {
                     <Route path="/customers" element={<CustomerListPage />} />
                     <Route path="/customers/add" element={<AddCustomerPage />} />
                     <Route path="/customers/edit/:id" element={<EditCustomerPage />} /> {/* :id will be cube_id_pk */}
+
+                    {/* Dimension Routes - NEW */}
+                    <Route path="/dimensions" element={<DimensionListPage />} />
+                    <Route path="/dimensions/add" element={<AddDimensionPage />} />
+                    <Route path="/dimensions/edit/:id" element={<EditDimensionPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

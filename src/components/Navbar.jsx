@@ -15,7 +15,11 @@ function Navbar() {
             <NavLink to="/customers" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
                 Customers
             </NavLink>
-            {/* You can add more global links here if needed */}
+
+            <NavLink to="/dimensions" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+                Dimensions
+            </NavLink>
+
         </nav>
     );
 }
