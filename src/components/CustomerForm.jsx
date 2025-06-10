@@ -31,7 +31,7 @@ const CustomerForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
         cube_ftppasswd: '',
         cust_refreshfrq: CUST_REFRESH_FRQS[0] || '',
         cust_refreshfrqmonth: CUST_REFRESH_FRQ_MONTHS[0] || '',
-        cust_charseparator: '',
+        cust_charseparator: ',',
         cust_limitrdlfilter: 0,
         cust_rdlinterwidlen: CUST_RDL_INTERWIDLENS[0] || '',
         cube_identity: '',
@@ -42,7 +42,7 @@ const CustomerForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
         cust_rdlcurrencyformat: CUST_RDL_CURRENCY_FORMATS[0] || '',
         cube_dailytasktrigger: CUBE_DAILY_TASK_TRIGGERS[0] || '',
         cube_localcubgenerate: CUBE_LOCAL_CUB_GENERATES[0] || '',
-        cube_optimratio: '',
+        cube_optimratio: 0,
         cube_nbdimtimevcol: 0,
         cube_nbdimgeovcol: 0,
         cust_internalnotes: '',
@@ -285,15 +285,26 @@ const CustomerForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
         const numericFields = [
             'cube_number', 'cust_limitrdlfilter', 'cube_nbproddatasources',
             'cust_beginmonthfiscal', 'cube_nbdimtimevcol', 'cube_nbdimgeovcol',
-            'cube_drillthroughnbrows'
+            'cube_drillthroughnbrows', 'cube_optimratio'
         ];
         numericFields.forEach(field => {
-            if (submissionData[field] !== '' && !isNaN(submissionData[field])) {
-                submissionData[field] = parseInt(submissionData[field], 10);
-            } else if (submissionData[field] === '') {
-                submissionData[field] = 0;
+            if (submissionData[field] !== '' && submissionData[field] !== null && !isNaN(submissionData[field])) { // check for null too
+                submissionData[field] = parseInt(String(submissionData[field]), 10);
+            } else if (submissionData[field] === '' && field !== 'cube_optimratio') { // cube_optimratio should always have a value from init
+                submissionData[field] = 0; // Default non-nullable ints to 0 if empty string (user cleared it)
+            } else if (field === 'cube_optimratio' && (submissionData[field] === '' || submissionData[field] === null)) {
+                submissionData[field] = 0; // Ensure cube_optimratio defaults to 0 if somehow cleared
             }
         });
+
+        // Handle nullable int: cube_factcoldefaultmeasure
+        if (submissionData.cube_factcoldefaultmeasure === '' || submissionData.cube_factcoldefaultmeasure === undefined) {
+            submissionData.cube_factcoldefaultmeasure = null;
+        } else if (submissionData.cube_factcoldefaultmeasure !== null && !isNaN(submissionData.cube_factcoldefaultmeasure)) {
+            submissionData.cube_factcoldefaultmeasure = parseInt(String(submissionData.cube_factcoldefaultmeasure), 10);
+        } else {
+            submissionData.cube_factcoldefaultmeasure = null; // If not a valid number or empty, set to null
+        }
 
 
         const optionalEnumFields = ['cust_ostype', 'cust_dbtype'];
@@ -304,13 +315,15 @@ const CustomerForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
         });
 
         const optionalStringFields = [
-            'cust_charseparator', 'cube_proddatasource_prefix', 'cube_optimratio',
+            //'cust_charseparator',
+            'cube_proddatasource_prefix',
             'cust_internalnotes', 'cust_externalnotes', 'cust_contact1', 'cust_contact2',
-            'cust_contact3', 'cube_scope_mdxinstruction', 'cube_factcoldefaultmeasure',
+            'cust_contact3', 'cube_scope_mdxinstruction',
+            //'cube_factcoldefaultmeasure',
             'cube_paramwhenreplica', 'cube_comments'
         ];
         optionalStringFields.forEach(field => {
-            if (submissionData[field] === "") {
+            if (submissionData[field] === "" || submissionData[field] === undefined) {
                 submissionData[field] = null;
             }
         });
