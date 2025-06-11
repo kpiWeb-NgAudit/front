@@ -26,6 +26,8 @@ function App() {
             <div className="container" style={{ padding: '0 20px 20px 20px' }}> {/* Adjusted padding slightly */}
                 <Routes>
                     <Route path="/" element={<HomePage />} /> {/* Root path now goes to new HomePage */}
+
+                    {/* Fact Routes */}
                     <Route path="/facts" element={<FactListPage />} /> {/* Facts list has its own path */}
                     <Route path="/facts/add" element={<AddFactPage />} />
                     <Route path="/facts/edit/:id" element={<EditFactPage />} />

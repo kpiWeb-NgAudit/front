@@ -1,43 +1,77 @@
-/* src/components/Navbar.css */
+/* src/components/Navbar.css or your global App.css/index.css */
+
+/* ... your existing navbar styles ... */
+
 .app-navbar {
-    background-color: #333; /* Dark background for navbar */
-    padding: 1rem 2rem;   /* Padding around links */
-    margin-bottom: 20px;
-    display: flex;
-    gap: 1.5rem; /* Space between links */
+    /* ... */
+    display: flex; /* If not already */
+    align-items: center; /* To align items nicely */
 }
 
-.app-navbar .nav-link {
-    color: #f0f0f0; /* Light text color for links */
+.nav-link {
+    /* ... your existing nav-link styles ... */
+    padding: 10px 15px;
     text-decoration: none;
-    font-size: 1.1em;
-    padding: 0.5rem 0;
-    position: relative;
+    color: #333;
+    /* ... */
 }
 
-.app-navbar .nav-link:hover {
-    color: #ffffff; /* Brighter on hover */
-}
-
-.app-navbar .nav-link.active {
-    color: #007bff; /* Active link color (e.g., blue) */
+.nav-link.active {
+    /* ... your existing active styles ... */
     font-weight: bold;
+    color: #007bff;
 }
 
-/* Optional: Add a subtle underline effect for active/hover */
-.app-navbar .nav-link::after {
-    content: '';
+/* Styles for the dropdown */
+.nav-item-dropdown {
+    position: relative; /* For positioning the dropdown menu */
+    display: inline-block; /* Or flex item if navbar is flex */
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit; /* Inherit from .nav-link */
+    font-family: inherit;
+    color: inherit; /* Inherit from .nav-link */
+    padding: 10px 15px; /* Match .nav-link padding */
+}
+
+.dropdown-toggle:hover {
+    background-color: #f0f0f0; /* Simple hover effect */
+}
+
+
+.dropdown-menu {
     position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #007bff;
-    transition: width 0.3s ease;
+    top: 100%; /* Position below the button */
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    z-index: 1000; /* Ensure it's above other content */
+    min-width: 160px; /* Or adjust as needed */
+    padding: 5px 0;
+    list-style: none; /* If you were to use <ul> <li> */
+    margin: 0;
+    display: flex; /* Make items stack vertically */
+    flex-direction: column;
 }
 
-.app-navbar .nav-link:hover::after,
-.app-navbar .nav-link.active::after {
-    width: 100%;
+.dropdown-item {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #333;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-item.active {
+    background-color: #e0e0e0; /* Slightly different active style for dropdown items */
+    font-weight: bold;
 }

@@ -231,6 +231,7 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
         if (!isEditMode) {
             delete submissionData.DimTimestamp;
         } else if (isEditMode && (!initialData || !initialData.dim_timestamp)) {
+
             // This case should ideally be caught by validation, but as a safeguard:
             console.error("Timestamp missing in initialData for edit mode.");
             alert("Error: Timestamp is missing. Cannot update.");

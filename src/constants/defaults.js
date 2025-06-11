@@ -3,7 +3,7 @@ import {
     FactZoneSpeEnum,
     FactPartitionTypeEnum,
 
-} from './enums';
+} from './factEnums.js';
 
 export const DEFAULT_PASTE_PAYLOAD_BASE = {
 

@@ -13,9 +13,9 @@ function HomePage() {
 
             <nav className="home-navigation">
                 <Link to="/facts" className="nav-card">
-                    <div className="nav-card-icon">📊</div> {/* Example Icon */}
+                    <div className="nav-card-icon">📈</div> {/* Example Icon */}
                     <h2>Facts Management</h2>
-                    <p>View, create, edit, and delete Facts.</p>
+                    <p>Define and manage fact tables and their properties.</p>
                 </Link>
 
                 <Link to="/customers" className="nav-card">
