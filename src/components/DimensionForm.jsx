@@ -8,6 +8,9 @@ import {
     getDropdownOptions, getOptionalDropdownOptions
 } from '../constants/dimensionEnums';
 import { getAllCustomers } from '../api/customerService'; // To fetch customers for dropdown
+import { snakeToPascal } from '../utils/transformKeys';
+
+
 
 const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
     const navigate = useNavigate();
@@ -48,6 +51,22 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
     const [errors, setErrors] = useState({});
     const [loadingCustomers, setLoadingCustomers] = useState(true);
 
+    const snakeToPascal = (str) => {
+        if (!str) return str;
+        // Handle cases like dim_id_pk -> DimIdPk, cube_id_pk -> CubeIdPk
+        if (str.toLowerCase().endsWith("_pk")) {
+            const prefix = str.substring(0, str.length - 3);
+            return prefix.split('_')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join('') + 'Pk';
+        }
+        return str.split('_')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join('');
+    };
+
+
+
     useEffect(() => {
         const fetchCustomersForDropdown = async () => {
             try {
@@ -66,40 +85,33 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
 
     useEffect(() => {
         if (isEditMode && initialData) {
-            const populatedData = { ...getInitialFormState() }; // Start with defaults
+            const populatedData = { ...getInitialFormState() };
+
             for (const keyInDto in initialData) {
-                // Map backend snake_case to DTO PascalCase if necessary,
-                // or ensure initialData uses PascalCase from the start.
-                // For now, assuming initialData keys match DTO keys (PascalCase).
-                const formKey = keyInDto.startsWith('dim_') || keyInDto.startsWith('cube_')
-                    ? keyInDto.charAt(0).toUpperCase() + keyInDto.slice(1).replace(/_([a-z])/g, g => g[1].toUpperCase())
-                    : keyInDto;
+                if (initialData.hasOwnProperty(keyInDto)) {
+                    const formKey = snakeToPascal(keyInDto); // use the utility function
 
+                    if (populatedData.hasOwnProperty(formKey)) {
+                        const value = initialData[keyInDto];
 
-                if (initialData.hasOwnProperty(keyInDto) && populatedData.hasOwnProperty(formKey)) {
-                    if (initialData[keyInDto] === null || typeof initialData[keyInDto] === 'undefined') {
-                        populatedData[formKey] = ''; // Handle nulls as empty strings for form fields
-                    } else if (typeof initialData[keyInDto] === 'number') {
-                        populatedData[formKey] = String(initialData[keyInDto]);
-                    } else if (formKey === 'DimTimestamp' && initialData[keyInDto]) {
-                        populatedData[formKey] = initialData[keyInDto]; // Keep byte array for timestamp
+                        if (value === null || typeof value === 'undefined') {
+                            populatedData[formKey] = '';
+                        } else if (typeof value === 'number') {
+                            populatedData[formKey] = String(value);
+                        } else if (formKey === 'DimTimestamp' && value) {
+                            populatedData[formKey] = value; // Keep timestamp bytes
+                        } else {
+                            populatedData[formKey] = value;
+                        }
+                    } else {
+                        console.warn(`Unmapped backend key: ${keyInDto} → ${formKey}`);
                     }
-                    else {
-                        populatedData[formKey] = initialData[keyInDto];
-                    }
-                } else if (formKey === 'DimTimestamp' && initialData.dim_timestamp) { // explicit check for timestamp
-                    populatedData.DimTimestamp = initialData.dim_timestamp;
                 }
             }
-            // Ensure DimIdPk is populated correctly in edit mode
-            if (initialData.dim_id_pk) {
-                populatedData.DimIdPk = String(initialData.dim_id_pk);
-            }
-
 
             setFormData(populatedData);
         } else if (!isEditMode) {
-            setFormData(getInitialFormState()); // Reset for create mode
+            setFormData(getInitialFormState());
         }
     }, [initialData, isEditMode, getInitialFormState]);
 
@@ -125,7 +137,11 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
         if (!formData.DimShortPresName) newErrors.DimShortPresName = 'Short Presentation Name is required.';
         else if (formData.DimShortPresName.length > 30) newErrors.DimShortPresName = 'Short Pres. Name max 30 chars.';
 
-        if (formData.DimWorkOrder === '' || isNaN(parseInt(formData.DimWorkOrder))) newErrors.DimWorkOrder = 'Work Order must be a number.';
+        if (formData.DimWorkOrder === '' || isNaN(parseInt(formData.DimWorkOrder))) {
+            newErrors.DimWorkOrder = 'Work Order must be a number.';
+        }else if (parseInt(formData.DimWorkOrder) <= 0) { // Or just !== 0 if 0 is never allowed
+            newErrors.DimWorkOrder = 'Work Order must be greater than 0.';
+        }
         if (!formData.DimCubeType) newErrors.DimCubeType = 'Dimension Cube Type is required.';
         if (formData.DimNbDaysKeep === '' || isNaN(parseInt(formData.DimNbDaysKeep))) newErrors.DimNbDaysKeep = 'Days to Keep must be a number.';
         if (!formData.DimDeleteOrphean) newErrors.DimDeleteOrphean = 'Delete Orphean option is required.';
@@ -235,6 +251,29 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
                 }
                 setErrors(prev => ({ ...prev, ...backendErrors, form: 'Backend validation failed.' }));
                 // alert("Backend validation failed. Check field errors."); // Alert in parent page
+            } else if (error.response?.status === 409 && error.response?.data) {
+                // ASP.NET Core returns ModelState directly when Conflict(ModelState) is used
+                const backendErrors = {};
+                const modelState = error.response.data; // This should be the ModelState object
+                for (const key in modelState) {
+                    // Key from ModelState might be "DimIdPk" or "dimensionDto.DimIdPk"
+                    // We need to normalize it to just "DimIdPk"
+                    const normalizedKey = key.includes('.') ? key.split('.').pop() : key;
+                    // Ensure the key exists on our form state before trying to set an error for it.
+                    // This assumes DTO property names are PascalCase in ModelState when returned from Conflict(ModelState)
+                    if (formData.hasOwnProperty(normalizedKey) || normalizedKey.toLowerCase() === 'form') {
+                        backendErrors[normalizedKey] = modelState[key].join(', ');
+                    } else {
+                        // If the key from ModelState doesn't directly match a form field,
+                        // accumulate it as a general form error or log it.
+                        // For simplicity, let's add to a general form error for now.
+                        backendErrors.form = (backendErrors.form ? backendErrors.form + " " : "") + modelState[key].join(', ');
+                        console.warn(`Conflict error for unmapped key: ${key}`, modelState[key]);
+                    }
+                }
+                setErrors(prev => ({...prev, ...backendErrors, form: backendErrors.form || 'A conflict occurred.'}));
+
+
             } else if (error.response?.data?.title) {
                 setErrors({ form: error.response.data.title });
             } else {
