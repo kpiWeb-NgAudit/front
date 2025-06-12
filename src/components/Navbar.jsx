@@ -44,6 +44,7 @@ function Navbar() {
                         >
                             Customers
                         </NavLink>
+
                         <NavLink
                             to="/dimensions"
                             className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
@@ -51,12 +52,21 @@ function Navbar() {
                         >
                             Dimensions
                         </NavLink>
+
                         <NavLink
                             to="/facts"
                             className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
                             onClick={closeDropdown}
                         >
                             Facts
+                        </NavLink>
+
+                        <NavLink
+                            to="/hierarchies"
+                            className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                            onClick={closeDropdown}
+                        >
+                            Hierarchies
                         </NavLink>
                         {/* Add more entities here as needed */}
                         {/* Example:

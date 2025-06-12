@@ -17,7 +17,10 @@ import EditDimensionPage from './pages/EditDimensionPage';
 
 import NotFoundPage from './pages/NotFoundPage';
 import './index.css'; // Global styles
-import './pages/HomePage.css'; // Import HomePage styles if not already global
+import './pages/HomePage.css';
+import EditHierarchyPage from "./pages/EditHierarchyPage.jsx";
+import AddHierarchyPage from "./pages/AddHierarchyPage.jsx";
+import HierarchyListPage from "./pages/HierarchyListPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -41,6 +44,11 @@ function App() {
                     <Route path="/dimensions" element={<DimensionListPage />} />
                     <Route path="/dimensions/add" element={<AddDimensionPage />} />
                     <Route path="/dimensions/edit/:id" element={<EditDimensionPage />} />
+
+                    {/* Hierarchy Routes - NEW */}
+                    <Route path="/hierarchies" element={<HierarchyListPage />} />
+                    <Route path="/hierarchies/add" element={<AddHierarchyPage />} />
+                    <Route path="/hierarchies/edit/:id" element={<EditHierarchyPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

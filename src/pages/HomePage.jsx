@@ -30,6 +30,12 @@ function HomePage() {
                     <p>Manage dimension attributes and configurations.</p>
                 </Link>
 
+                <Link to="/hierarchies" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🔗</div> {/* Example Icon */}
+                    <h2>Hierarchies Management</h2>
+                    <p>Define and manage dimension hierarchies.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>

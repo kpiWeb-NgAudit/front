@@ -5,11 +5,17 @@ const API_BASE_URL = 'http://localhost:5208/api/dimensions'; // Adjust if your p
 
 // Fetch all dimensions with optional query parameters
 export const getAllDimensions = async (params = {}) => {
-    // params could be { cubeIdPk: 'someCustomer', sortBy: 'dimTname', pageNumber: 1, pageSize: 20 }
-    const response = await axios.get(API_BASE_URL, { params });
-    // If your API returns pagination data in headers, you might want to process it here or in the component
-    // For now, just returning the data array
-    return response.data;
+    console.log("dimensionService: getAllDimensions called with params:", params);
+    try {
+        const response = await axios.get(API_BASE_URL, { params }); // API_BASE_URL here is for dimensions
+        console.log("dimensionService: getAllDimensions API response status:", response.status);
+        console.log("dimensionService: getAllDimensions API response data:", response.data); // Log raw data
+        console.log("dimensionService: getAllDimensions API response headers:", response.headers);
+        return { data: response.data, headers: response.headers };
+    } catch (error) {
+        console.error("dimensionService: Error in getAllDimensions:", error.response || error.message);
+        throw error; // Re-throw to be caught by the component
+    }
 };
 
 export const getDimensionById = async (id) => {
