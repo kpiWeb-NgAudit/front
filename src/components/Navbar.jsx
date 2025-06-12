@@ -1,10 +1,11 @@
 // src/components/Navbar.jsx
-import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom'; // Added Link for non-NavLink items
-import './Navbar.css'; // Ensure you have styles for .dropdown-menu, .dropdown-item
+import React, { useState, useEffect, useRef } from 'react'; // Added useEffect, useRef
+import { NavLink } from 'react-router-dom';
+import './Navbar.css';
 
 function Navbar() {
     const [isEntityDropdownOpen, setIsEntityDropdownOpen] = useState(false);
+    const dropdownRef = useRef(null); // For detecting clicks outside
 
     const toggleEntityDropdown = () => {
         setIsEntityDropdownOpen(!isEntityDropdownOpen);
@@ -14,81 +15,90 @@ function Navbar() {
         setIsEntityDropdownOpen(false);
     };
 
+    // Effect to handle clicks outside the dropdown to close it
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                closeDropdown();
+            }
+        };
+
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [dropdownRef]); // Only re-run if dropdownRef changes (it won't)
+
     return (
         <nav className="app-navbar">
             <NavLink
                 to="/"
                 className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-                onClick={closeDropdown} // Close dropdown when Home is clicked
+                onClick={closeDropdown}
                 end
             >
                 Home
             </NavLink>
 
-            <div className="nav-item-dropdown"> {/* Wrapper for the dropdown button and menu */}
+            <div className="nav-item-dropdown" ref={dropdownRef}> {/* Wrapper with ref */}
                 <button
                     type="button"
-                    className="nav-link dropdown-toggle" // Style as a nav-link
+                    className="nav-link dropdown-toggle"
                     onClick={toggleEntityDropdown}
                     aria-expanded={isEntityDropdownOpen}
                     aria-haspopup="true"
                 >
-                    Manage Entities ▼ {/* Or use an icon */}
+                    Manage Entities {isEntityDropdownOpen ? '▲' : '▼'} {/* Better toggle indicator */}
                 </button>
                 {isEntityDropdownOpen && (
                     <div className="dropdown-menu">
                         <NavLink
                             to="/customers"
-                            className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
+                            className="dropdown-item" // Use a consistent class for NavLink styling
+                            activeclassname="active" // For react-router v6, activeClassName is deprecated, use style or className callback
                             onClick={closeDropdown}
                         >
                             Customers
                         </NavLink>
-
                         <NavLink
                             to="/dimensions"
-                            className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
+                            className="dropdown-item"
+                            activeclassname="active"
                             onClick={closeDropdown}
                         >
                             Dimensions
                         </NavLink>
-
                         <NavLink
                             to="/facts"
-                            className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
+                            className="dropdown-item"
+                            activeclassname="active"
                             onClick={closeDropdown}
                         >
                             Facts
                         </NavLink>
-
                         <NavLink
                             to="/hierarchies"
-                            className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
+                            className="dropdown-item" // CONSISTENT CLASS
+                            activeclassname="active"  // For active state
                             onClick={closeDropdown}
                         >
                             Hierarchies
                         </NavLink>
-                        {/* Add more entities here as needed */}
-                        {/* Example:
+                        {/* Add other entities like HierDimCols if they have their own top-level list page */}
                         <NavLink
-                            to="/users"
-                            className={({ isActive }) => (isActive ? "dropdown-item active" : "dropdown-item")}
+                            to="/hierdimcols" // Assuming you will create a page for this
+                            className="dropdown-item"
+                            activeclassname="active"
                             onClick={closeDropdown}
                         >
-                            Users
+                            Hierarchy Levels
                         </NavLink>
-                        */}
                     </div>
                 )}
             </div>
-
-            {/* You can keep other direct links here if they are few and very important */}
-            {/* For example, a global "Settings" or "Profile" link */}
-            {/*
-            <NavLink to="/settings" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-                Settings
-            </NavLink>
-            */}
+            {/* Other direct links if any */}
         </nav>
     );
 }

@@ -25,23 +25,47 @@ function DimensionListPage() {
         setLoading(true);
         setError(null);
         try {
-            const [dimData, custData] = await Promise.all([
-                getAllDimensions({ cubeIdPk: selectedCubeId || undefined }), // Pass undefined if empty
+            // If you re-introduce pagination, ensure params are passed correctly
+            const paramsForDimensions = { pageSize: 1000 }; // Example: fetch many for now
+            if (selectedCubeId) {
+                paramsForDimensions.cubeIdPk = selectedCubeId;
+            }
+
+            const [dimDataResponse, custData] = await Promise.all([
+                getAllDimensions(paramsForDimensions),
                 getAllCustomers()
             ]);
-            setDimensions(dimData || []);
-            setCustomers(custData || []);
+
+            console.log("DimensionListPage: dimDataResponse from service:", dimDataResponse); // Log this
+
+            // CORRECT WAY TO SET STATE:
+            if (dimDataResponse && Array.isArray(dimDataResponse.data)) {
+                setDimensions(dimDataResponse.data);
+            } else {
+                console.warn("DimensionListPage: dimDataResponse.data is not an array, setting dimensions to empty.", dimDataResponse);
+                setDimensions([]);
+            }
+
+            if (Array.isArray(custData)) { // Assuming getAllCustomers returns an array directly
+                setCustomers(custData);
+            } else {
+                console.warn("DimensionListPage: custData is not an array, setting customers to empty.", custData);
+                setCustomers([]);
+            }
         } catch (err) {
-            console.error("Error fetching data:", err);
+            console.error("Error fetching data in DimensionListPage:", err);
             setError(err);
+            setDimensions([]); // Ensure it's an array on error
+            setCustomers([]);
         } finally {
             setLoading(false);
         }
     }, [selectedCubeId]); // Re-fetch if selectedCubeId changes
 
     useEffect(() => {
+        console.log("DimensionListPage: useEffect to fetch data triggered by selectedCubeId change or mount.");
         fetchDimensionsAndCustomers();
-    }, [fetchDimensionsAndCustomers]);
+    }, [fetchDimensionsAndCustomers]); // fetchDimensionsAndCustomers is memoized and changes when selectedCubeId changes
 
     const handleDeleteDimension = async (id) => {
         if (!window.confirm(`Are you sure you want to delete dimension with ID: ${id}? This action cannot be undone.`)) {
