@@ -36,6 +36,12 @@ function HomePage() {
                     <p>Define and manage dimension hierarchies and their levels.</p>
                 </Link>
 
+                <Link to="/roles" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🛡️</div> {/* Example Icon for roles */}
+                    <h2>Roles Management</h2>
+                    <p>Manage user roles and permissions for customers.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>

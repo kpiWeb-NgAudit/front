@@ -20,7 +20,11 @@ import './index.css'; // Global styles
 import './pages/HomePage.css';
 import EditHierarchyPage from "./pages/EditHierarchyPage.jsx";
 import AddHierarchyPage from "./pages/AddHierarchyPage.jsx";
-import HierarchyListPage from "./pages/HierarchyListPage.jsx"; // Import HomePage styles if not already global
+import HierarchyListPage from "./pages/HierarchyListPage.jsx";
+import EditRolePage from "./pages/EditRolePage.jsx";
+import AddRolePage from "./pages/AddRolePage.jsx";
+import RoleListPage from "./pages/RoleListPage.jsx";
+import HierDimColListPage from "./pages/HierDimColListPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -49,6 +53,13 @@ function App() {
                     <Route path="/hierarchies" element={<HierarchyListPage />} />
                     <Route path="/hierarchies/add" element={<AddHierarchyPage />} />
                     <Route path="/hierarchies/edit/:id" element={<EditHierarchyPage />} />
+
+                    <Route path="/hierdimcols" element={<HierDimColListPage />} />
+
+                    {/* Role Routes - NEW for top-level management */}
+                    <Route path="/roles" element={<RoleListPage />} />
+                    <Route path="/roles/add" element={<AddRolePage />} />
+                    <Route path="/roles/edit/:id" element={<EditRolePage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>

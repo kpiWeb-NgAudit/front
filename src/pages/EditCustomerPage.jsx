@@ -1,86 +1,77 @@
 // src/pages/EditCustomerPage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import CustomerForm from '../components/CustomerForm'; // <<< IMPORT CustomerForm
-import { getCustomerById, updateCustomer } from '../api/customerService'; // <<< IMPORT API functions
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import CustomerForm from '../components/CustomerForm'; // For main customer properties
+import CustomerRoleManager from '../components/CustomerRoleManager'; // <<< NEW IMPORT
+import { getCustomerById, updateCustomer } from '../api/customerService';
 
 function EditCustomerPage() {
-    const { id } = useParams(); // Get 'id' (which is cube_id_pk) from URL
     const navigate = useNavigate();
+    const { id } = useParams(); // This is cube_id_pk (string from URL)
     const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const fetchCustomer = useCallback(async () => {
-        if (!id) return; // Should not happen if route is matched correctly
-        // console.log(`EditCustomerPage: Fetching customer with id: ${id}`);
+    // id from params is the cube_id_pk (string)
+    const customerId = id;
+
+    const fetchCustomerDetails = useCallback(async () => {
+        if (!customerId) {
+            setError(new Error("Customer ID missing from URL."));
+            setLoading(false);
+            return;
+        }
+        setLoading(true); setError(null);
         try {
-            setLoading(true);
-            setError(null);
-            const data = await getCustomerById(id);
-            // console.log("EditCustomerPage: Data received for customer:", data);
+            const data = await getCustomerById(customerId);
             setCustomer(data);
         } catch (err) {
-            console.error(`EditCustomerPage: Error fetching customer ${id}:`, err);
-            setError(err);
+            setError(err.message || "Failed to load customer details.");
         } finally {
             setLoading(false);
         }
-    }, [id]); // Dependency on 'id' from URL params
+    }, [customerId]);
 
     useEffect(() => {
-        fetchCustomer();
-    }, [fetchCustomer]);
+        fetchCustomerDetails();
+    }, [fetchCustomerDetails]);
 
-    const handleUpdateCustomer = async (customerData) => {
-        if (!customer) return; // Should have customer data loaded
-
-        // The customerData from the form should contain all fields.
-        // The updateCustomer service needs the original cust_timestamp for concurrency.
-        // CustomerForm's useEffect should populate formData with initialData, including cust_timestamp.
-        // And handleSubmit in CustomerForm should include cust_timestamp in submissionData for edit mode.
-        const payload = {
-            ...customerData,
-            cube_id_pk: customer.cube_id_pk, // Ensure pk is not changed by form
-            cust_timestamp: customer.cust_timestamp // Send back the original timestamp for concurrency
-        };
-
+    const handleUpdateCustomerCoreDetails = async (customerFormData) => {
+        if (!customerId) return Promise.reject(new Error("Customer ID missing"));
         try {
-            await updateCustomer(id, payload); // id here is customer.cube_id_pk
-            alert('Customer updated successfully!');
-            navigate('/customers');
+            // This updates the main customer properties
+            const updatedCustomer = await updateCustomer(customerId, customerFormData);
+            alert(`Customer "${updatedCustomer.cube_name || updatedCustomer.cube_id_pk}" core details updated.`);
+            setCustomer(prev => ({...prev, ...updatedCustomer, cust_timestamp: updatedCustomer.cust_timestamp }));
         } catch (error) {
-            console.error('Failed to update customer:', error);
-            // The error might already be handled and displayed by CustomerForm's handleSubmit
-            // If not, or for a general fallback:
-            alert(`Error updating customer: ${error.response?.data?.message || error.response?.data?.title || error.message}`);
-            throw error; // Re-throw to allow CustomerForm to potentially handle specific field errors
+            alert(`Error updating customer details: ${error.response?.data?.message || error.message}`);
+            throw error;
         }
     };
 
-    if (loading) return <p>Loading customer data for editing...</p>;
-    if (error) {
-        return (
-            <div className="error-page">
-                <h2>Error Loading Customer</h2>
-                <p>Could not load customer data: {error.response?.data?.title || error.response?.data?.message ||  error.message}</p>
-                <p>The customer (ID: {id}) may not exist or there was a server issue.</p>
-                <button onClick={() => navigate('/customers')}>Back to Customer List</button>
-            </div>
-        );
-    }
-    if (!customer) return <p>Customer not found or finished loading without data.</p>; // Should be caught by error typically
+    if (loading) return <p>Loading customer data...</p>;
+    if (error) return <p className="error-message">Error: {error}</p>;
+    if (!customer && !loading) return <p>Customer not found (ID: {customerId}).</p>;
+    if (!customer) return null;
 
     return (
         <div>
             <h2>Edit Customer (ID: {customer.cube_id_pk})</h2>
+            <p style={{ fontStyle: 'italic', marginBottom: '15px' }}>
+                Edit main customer properties. Associated Roles are managed below.
+            </p>
+
             <CustomerForm
-                onSubmit={handleUpdateCustomer}
-                initialData={customer} // Pass the fetched customer data
+                onSubmit={handleUpdateCustomerCoreDetails}
+                initialData={customer}
                 isEditMode={true}
             />
+
+            <hr style={{ margin: '30px 0', border: 0, borderTop: '1px solid #ccc' }} />
+
+            {/* Manager for Roles associated with this Customer */}
+            {customerId && <CustomerRoleManager customerId={customerId} />}
         </div>
     );
 }
-
 export default EditCustomerPage;

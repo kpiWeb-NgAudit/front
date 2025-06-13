@@ -88,13 +88,24 @@ function Navbar() {
                         </NavLink>
                         {/* Add other entities like HierDimCols if they have their own top-level list page */}
                         <NavLink
-                            to="/hierdimcols" // Assuming you will create a page for this
+                            to="/hierdimcols"
                             className="dropdown-item"
-                            activeclassname="active"
                             onClick={closeDropdown}
                         >
                             Hierarchy Levels
                         </NavLink>
+
+
+                        <NavLink // NEW LINK FOR ROLES
+                            to="/roles"
+                            className="dropdown-item"
+                            // className={({ isActive }) => isActive ? "dropdown-item active" : "dropdown-item"}
+                            onClick={closeDropdown}
+                        >
+                            Roles
+                        </NavLink>
+
+
                     </div>
                 )}
             </div>

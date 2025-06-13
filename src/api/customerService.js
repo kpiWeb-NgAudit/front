@@ -3,10 +3,18 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:5208/api/customer'; // Or your full backend URL / proxied path
 
-export const getAllCustomers = async () => {
-
-    const response = await axios.get(API_BASE_URL);
-    return response.data;
+export const getAllCustomers = async (params = {}) => { // Added params for consistency
+    console.log("customerService: getAllCustomers called with params:", params);
+    try {
+        const response = await axios.get(API_BASE_URL, { params }); // API_BASE_URL for customers
+        console.log("customerService: API response data for customers:", response.data);
+        // THIS DIRECTLY RETURNS THE ARRAY (or whatever response.data is)
+        // It DOES NOT return { data: ..., headers: ... } like your newer services
+        return response.data;
+    } catch (error) {
+        console.error("customerService: Error in getAllCustomers:", error.response?.data || error.message);
+        throw error;
+    }
 };
 
 export const getCustomerById = async (id) => {

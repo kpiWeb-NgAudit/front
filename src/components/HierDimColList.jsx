@@ -31,21 +31,21 @@ const HierDimColList = ({
             </thead>
             <tbody>
             {hierDimCols.map((hdc) => (
-                <tr key={`${hdc.hier_id_pk}-${hdc.dimcol_id_pk}`}> {/* Composite key */}
-                    <td>{hdc.dimcol_id_pk}</td>
-                    {/*<td>{dimColumnsMap && dimColumnsMap[hdc.dimcol_id_pk] ? dimColumnsMap[hdc.dimcol_id_pk] : 'N/A'}</td>*/}
-                    <td>{hdc.hierdim_level}</td>
-                    <td>{hdc.hierdim_rdltypepresnamecol}</td>
+                <tr key={`${hdc.hierIdPk}-${hdc.dimcolIdPk}`}>
+                    <td>{hdc.dimcolIdPk}</td>
+                    <td>{hdc.dimensionColumnName || 'N/A'}</td>
+                    <td>{hdc.hierDimLevel}</td>
+                    <td>{hdc.hierDimRdlTypePresnameCol}</td>
                     <td className="actions">
                         <button
                             className="secondary"
-                            onClick={() => onEdit(hdc)} // Pass the whole object for editing
+                            onClick={() => onEdit(hdc)}
                         >
-                            Edit Level/Type
+                            Edit
                         </button>
                         <button
                             className="danger"
-                            onClick={() => onDelete(hdc.hier_id_pk, hdc.dimcol_id_pk)}
+                            onClick={() => onDelete(hdc.hierIdPk, hdc.dimcolIdPk)}
                         >
                             Remove
                         </button>
