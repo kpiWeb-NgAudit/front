@@ -109,6 +109,10 @@ function Navbar() {
                             Users
                         </NavLink>
 
+                        <NavLink to="/cubesets" className="dropdown-item" onClick={closeDropdown}>
+                            Cubesets
+                        </NavLink>
+
                         <NavLink
                             to="/customer-user-assignments"
                             className="dropdown-item"

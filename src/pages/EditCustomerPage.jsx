@@ -5,6 +5,7 @@ import CustomerForm from '../components/CustomerForm'; // For main customer prop
 import CustomerRoleManager from '../components/CustomerRoleManager'; // <<< NEW IMPORT
 import { getCustomerById, updateCustomer } from '../api/customerService';
 import CustomerUserAssignmentManager from "../components/CustomerUserAssignmentManager.jsx";
+import CustomerCubesetManager from "../components/CustomerCubesetManager.jsx";
 
 function EditCustomerPage() {
     const navigate = useNavigate();
@@ -76,6 +77,11 @@ function EditCustomerPage() {
             <hr style={{ margin: '30px 0' }} />
             {/* Manager for User Assignments for this Customer - NEW */}
             {customerId && <CustomerUserAssignmentManager customerId={customerId} />}
+
+            <hr style={{ margin: '30px 0' }} /> {/* Separator for Cubesets */}
+            {customerId && <CustomerCubesetManager customerId={customerId} />} {/* <<< NEW INTEGRATION */}
+
+
 
         </div>
     );

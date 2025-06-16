@@ -28,7 +28,10 @@ import HierDimColListPage from "./pages/HierDimColListPage.jsx";
 import UserListPage from "./pages/UserListPage.jsx";
 import AddUserPage from "./pages/AddUserPage.jsx";
 import EditUserPage from "./pages/EditUserPage.jsx";
-import CubeUserAssociationListPage from "./pages/CubeUserAssociationListPage.jsx"; // Import HomePage styles if not already global
+import CubeUserAssociationListPage from "./pages/CubeUserAssociationListPage.jsx";
+import CubesetListPage from "./pages/CubesetListPage.jsx";
+import AddCubesetPage from "./pages/AddCubesetPage.jsx";
+import EditCubesetPage from "./pages/EditCubesetPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -43,34 +46,39 @@ function App() {
                     <Route path="/facts/add" element={<AddFactPage />} />
                     <Route path="/facts/edit/:id" element={<EditFactPage />} />
 
-                    {/* Customer Routes (you'll create these pages next) */}
+                    {/* Customer Routes */}
                     <Route path="/customers" element={<CustomerListPage />} />
                     <Route path="/customers/add" element={<AddCustomerPage />} />
                     <Route path="/customers/edit/:id" element={<EditCustomerPage />} /> {/* :id will be cube_id_pk */}
 
-                    {/* Dimension Routes - NEW */}
+
                     <Route path="/dimensions" element={<DimensionListPage />} />
                     <Route path="/dimensions/add" element={<AddDimensionPage />} />
                     <Route path="/dimensions/edit/:id" element={<EditDimensionPage />} />
 
-                    {/* Hierarchy Routes - NEW */}
+                    {/* Hierarchy Routes */}
                     <Route path="/hierarchies" element={<HierarchyListPage />} />
                     <Route path="/hierarchies/add" element={<AddHierarchyPage />} />
                     <Route path="/hierarchies/edit/:id" element={<EditHierarchyPage />} />
 
                     <Route path="/hierdimcols" element={<HierDimColListPage />} />
 
-                    {/* Role Routes - NEW for top-level management */}
+                    {/* Role Routes  */}
                     <Route path="/roles" element={<RoleListPage />} />
                     <Route path="/roles/add" element={<AddRolePage />} />
                     <Route path="/roles/edit/:id" element={<EditRolePage />} />
 
-                    {/* User Routes - NEW */}
+                    {/* User Routes  */}
                     <Route path="/users" element={<UserListPage />} />
                     <Route path="/users/add" element={<AddUserPage />} />
                     <Route path="/users/edit/:id" element={<EditUserPage />} />
 
-                    {/* NEW Route for CubeUser Associations List */}
+                    {/* Cubeset Routes  */}
+                    <Route path="/cubesets" element={<CubesetListPage />} />
+                    <Route path="/cubesets/add" element={<AddCubesetPage />} />
+                    <Route path="/cubesets/edit/:id" element={<EditCubesetPage />} />
+
+                    {/* CubeUser Associations List */}
                     <Route path="/customer-user-assignments" element={<CubeUserAssociationListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />

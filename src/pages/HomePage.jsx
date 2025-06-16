@@ -54,6 +54,12 @@ function HomePage() {
                     <p>View all customer and user associations and roles.</p>
                 </Link>
 
+                <Link to="/cubesets" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🧊</div> {/* Example Icon for cubesets */}
+                    <h2>Cubesets Management</h2>
+                    <p>Define and manage sets within OLAP cubes.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>
