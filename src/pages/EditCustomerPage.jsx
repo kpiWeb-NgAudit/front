@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CustomerForm from '../components/CustomerForm'; // For main customer properties
 import CustomerRoleManager from '../components/CustomerRoleManager'; // <<< NEW IMPORT
 import { getCustomerById, updateCustomer } from '../api/customerService';
+import CustomerUserAssignmentManager from "../components/CustomerUserAssignmentManager.jsx";
 
 function EditCustomerPage() {
     const navigate = useNavigate();
@@ -71,6 +72,11 @@ function EditCustomerPage() {
 
             {/* Manager for Roles associated with this Customer */}
             {customerId && <CustomerRoleManager customerId={customerId} />}
+
+            <hr style={{ margin: '30px 0' }} />
+            {/* Manager for User Assignments for this Customer - NEW */}
+            {customerId && <CustomerUserAssignmentManager customerId={customerId} />}
+
         </div>
     );
 }

@@ -27,7 +27,8 @@ import RoleListPage from "./pages/RoleListPage.jsx";
 import HierDimColListPage from "./pages/HierDimColListPage.jsx";
 import UserListPage from "./pages/UserListPage.jsx";
 import AddUserPage from "./pages/AddUserPage.jsx";
-import EditUserPage from "./pages/EditUserPage.jsx"; // Import HomePage styles if not already global
+import EditUserPage from "./pages/EditUserPage.jsx";
+import CubeUserAssociationListPage from "./pages/CubeUserAssociationListPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -68,6 +69,9 @@ function App() {
                     <Route path="/users" element={<UserListPage />} />
                     <Route path="/users/add" element={<AddUserPage />} />
                     <Route path="/users/edit/:id" element={<EditUserPage />} />
+
+                    {/* NEW Route for CubeUser Associations List */}
+                    <Route path="/customer-user-assignments" element={<CubeUserAssociationListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
 

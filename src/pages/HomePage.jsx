@@ -48,6 +48,12 @@ function HomePage() {
                     <p>Administer user accounts and access.</p>
                 </Link>
 
+                <Link to="/customer-user-assignments" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🤝</div> {/* Example Icon */}
+                    <h2>Customer-User Links</h2>
+                    <p>View all customer and user associations and roles.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>
