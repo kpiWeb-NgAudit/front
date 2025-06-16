@@ -42,6 +42,12 @@ function HomePage() {
                     <p>Manage user roles and permissions for customers.</p>
                 </Link>
 
+                <Link to="/users" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">👤</div> {/* Example Icon for users */}
+                    <h2>Users Management</h2>
+                    <p>Administer user accounts and access.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>

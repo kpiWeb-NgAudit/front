@@ -105,6 +105,10 @@ function Navbar() {
                             Roles
                         </NavLink>
 
+                        <NavLink to="/users" className="dropdown-item" onClick={closeDropdown}>
+                            Users
+                        </NavLink>
+
 
                     </div>
                 )}
