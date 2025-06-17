@@ -13,7 +13,7 @@ function HomePage() {
 
             <nav className="home-navigation">
                 <Link to="/customers" className="nav-card"> {/* Ensure this route matches your App.jsx */}
-                    <div className="nav-card-icon">👥</div>
+                    <div className="nav-card-icon">🏢</div>
                     <h2>Customers Management</h2>
                     <p>Manage customer profiles and configurations.</p>
                 </Link>
@@ -43,7 +43,7 @@ function HomePage() {
                 </Link>
 
                 <Link to="/users" className="nav-card"> {/* NEW CARD */}
-                    <div className="nav-card-icon">👤</div> {/* Example Icon for users */}
+                    <div className="nav-card-icon">👥</div> {/* Example Icon for users */}
                     <h2>Users Management</h2>
                     <p>Administer user accounts and access.</p>
                 </Link>
@@ -58,6 +58,18 @@ function HomePage() {
                     <div className="nav-card-icon">🧊</div> {/* Example Icon for cubesets */}
                     <h2>Cubesets Management</h2>
                     <p>Define and manage sets within OLAP cubes.</p>
+                </Link>
+
+                <Link to="/data-extract-definitions" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">📜</div> {/* Example Icon: Scroll/Document */}
+                    <h2>Data Extract Definitions</h2>
+                    <p>View all defined data extraction configurations.</p>
+                </Link>
+
+                <Link to="/exploit-instructions" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">⚙️</div> {/* Example Icon: Gear/Settings */}
+                    <h2>Exploit Instructions</h2>
+                    <p>Manage automated tasks and alerts for customers.</p>
                 </Link>
 
                 {/* Add more cards here for other sections if needed in the future */}

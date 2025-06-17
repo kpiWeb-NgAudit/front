@@ -121,6 +121,18 @@ function Navbar() {
                             Customer-User Links
                         </NavLink>
 
+                        <NavLink
+                            to="/data-extract-definitions"
+                            className="dropdown-item"
+                            onClick={closeDropdown}
+                        >
+                            Data Extracts
+                        </NavLink>
+
+                        <NavLink to="/exploit-instructions" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
+                            Exploit Instructions
+                        </NavLink>
+
 
                     </div>
                 )}

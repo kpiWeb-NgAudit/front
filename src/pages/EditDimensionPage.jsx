@@ -3,6 +3,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DimensionForm from '../components/DimensionForm'; // For main dimension properties
 import { getDimensionById, updateDimension } from '../api/dimensionService';
+import DimensionExtractManager from '../components/DimensionExtractManager';
+import DimensionColumnManager from "../components/DimensionColumnManager.jsx"; // <<< NEW IMPORT
+import CustomerExploitInstructionManager from '../components/CustomerExploitInstructionManager';
+import CustomerCubesetManager from "../components/CustomerCubesetManager.jsx"; // <<< NEW IMPORT
+
+
 
 function EditDimensionPage() {
     const navigate = useNavigate();
@@ -86,19 +92,43 @@ function EditDimensionPage() {
     // It should ideally be caught by the above conditions, but as a final safeguard:
     if (!dimension) return null;
 
+    const parentCustomerId = dimension.cube_id_pk;
+
     return (
         <div>
-            <h2>Edit Dimension (ID: {dimension.dim_id_pk})</h2>
+            <h2>Edit Dimension (ID: {dimension.dim_id_pk}) - Customer: {parentCustomerId}</h2>
             <DimensionForm
                 onSubmit={handleUpdateDimension}
-                initialData={dimension} // Pass the fetched dimension data
+                initialData={dimension}
                 isEditMode={true}
+                // parentCubeIdPk is not a direct prop for DimensionForm, it uses dimension.cube_id_pk from initialData
             />
-            {/*
-                If/When you want to add DimensionColumnManager, it would go here:
-                <hr style={{ margin: '30px 0', border: 0, borderTop: '1px solid #ccc' }} />
-                {!isNaN(numericId) && <DimensionColumnManager dimensionId={numericId} />}
-            */}
+
+            <hr style={{ margin: '30px 0' }} />
+            <h3>Dimension Columns</h3>
+            {!isNaN(numericId) && <DimensionColumnManager dimensionId={numericId} />}
+
+            <hr style={{ margin: '30px 0' }} />
+            <h3>Data Extract Definitions for this Dimension</h3>
+            {!isNaN(numericId) && parentCustomerId && (
+                <DimensionExtractManager
+                    dimensionId={numericId}
+                    parentCubeIdPk={parentCustomerId}
+                />
+            )}
+
+            {/* Sections for managing Cubesets and Exploit Instructions OF THE PARENT CUSTOMER */}
+            {parentCustomerId && ( // Only render if we have a customer ID
+                <>
+                    <hr style={{ margin: '30px 0', border: 0, borderTop: '2px dashed #bbb' }} />
+                    <h3>Cubesets for Customer: {parentCustomerId}</h3>
+                    <CustomerCubesetManager customerId={parentCustomerId} />
+
+                    <hr style={{ margin: '30px 0', border: 0, borderTop: '2px dashed #bbb' }} />
+                    <h3>Exploit Instructions for Customer: {parentCustomerId}</h3>
+                    <CustomerExploitInstructionManager customerId={parentCustomerId} />
+                </>
+            )}
         </div>
     );
 }

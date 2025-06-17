@@ -31,7 +31,11 @@ import EditUserPage from "./pages/EditUserPage.jsx";
 import CubeUserAssociationListPage from "./pages/CubeUserAssociationListPage.jsx";
 import CubesetListPage from "./pages/CubesetListPage.jsx";
 import AddCubesetPage from "./pages/AddCubesetPage.jsx";
-import EditCubesetPage from "./pages/EditCubesetPage.jsx"; // Import HomePage styles if not already global
+import EditCubesetPage from "./pages/EditCubesetPage.jsx";
+import DimDbExtractV2ListPage from "./pages/DimDbExtractV2ListPage.jsx";
+import ExploitInstructionListPage from "./pages/ExploitInstructionListPage.jsx";
+import AddExploitInstructionPage from "./pages/AddExploitInstructionPage.jsx";
+import EditExploitInstructionPage from "./pages/EditExploitInstructionPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -78,8 +82,16 @@ function App() {
                     <Route path="/cubesets/add" element={<AddCubesetPage />} />
                     <Route path="/cubesets/edit/:id" element={<EditCubesetPage />} />
 
+                    {/* Exploit Instruction Routes - NEW */}
+                    <Route path="/exploit-instructions" element={<ExploitInstructionListPage />} />
+                    <Route path="/exploit-instructions/add" element={<AddExploitInstructionPage />} />
+                    <Route path="/exploit-instructions/edit/:id" element={<EditExploitInstructionPage />} />
+
                     {/* CubeUser Associations List */}
                     <Route path="/customer-user-assignments" element={<CubeUserAssociationListPage />} />
+
+                    {/*  DimDbExtractV2 List */}
+                    <Route path="/data-extract-definitions" element={<DimDbExtractV2ListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
 
