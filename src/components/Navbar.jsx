@@ -133,6 +133,10 @@ function Navbar() {
                             Exploit Instructions
                         </NavLink>
 
+                        <NavLink to="/sources" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
+                            Sources
+                        </NavLink>
+
 
                     </div>
                 )}

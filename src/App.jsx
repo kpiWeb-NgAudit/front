@@ -35,7 +35,10 @@ import EditCubesetPage from "./pages/EditCubesetPage.jsx";
 import DimDbExtractV2ListPage from "./pages/DimDbExtractV2ListPage.jsx";
 import ExploitInstructionListPage from "./pages/ExploitInstructionListPage.jsx";
 import AddExploitInstructionPage from "./pages/AddExploitInstructionPage.jsx";
-import EditExploitInstructionPage from "./pages/EditExploitInstructionPage.jsx"; // Import HomePage styles if not already global
+import EditExploitInstructionPage from "./pages/EditExploitInstructionPage.jsx";
+import SourceListPage from "./pages/SourceListPage.jsx";
+import AddSourcePage from "./pages/AddSourcePage.jsx";
+import EditSourcePage from "./pages/EditSourcePage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -86,6 +89,11 @@ function App() {
                     <Route path="/exploit-instructions" element={<ExploitInstructionListPage />} />
                     <Route path="/exploit-instructions/add" element={<AddExploitInstructionPage />} />
                     <Route path="/exploit-instructions/edit/:id" element={<EditExploitInstructionPage />} />
+
+                    {/* Source Routes  */}
+                    <Route path="/sources" element={<SourceListPage />} />
+                    <Route path="/sources/add" element={<AddSourcePage />} />
+                    <Route path="/sources/edit/:id" element={<EditSourcePage />} />
 
                     {/* CubeUser Associations List */}
                     <Route path="/customer-user-assignments" element={<CubeUserAssociationListPage />} />

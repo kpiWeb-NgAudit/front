@@ -72,6 +72,12 @@ function HomePage() {
                     <p>Manage automated tasks and alerts for customers.</p>
                 </Link>
 
+                <Link to="/sources" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">💾</div> {/* Example Icon: Floppy Disk/Data Source */}
+                    <h2>Sources Management</h2>
+                    <p>Define and manage data sources for customers.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>
