@@ -38,7 +38,8 @@ import AddExploitInstructionPage from "./pages/AddExploitInstructionPage.jsx";
 import EditExploitInstructionPage from "./pages/EditExploitInstructionPage.jsx";
 import SourceListPage from "./pages/SourceListPage.jsx";
 import AddSourcePage from "./pages/AddSourcePage.jsx";
-import EditSourcePage from "./pages/EditSourcePage.jsx"; // Import HomePage styles if not already global
+import EditSourcePage from "./pages/EditSourcePage.jsx";
+import ThemeListPage from "./pages/ThemeListPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -100,6 +101,9 @@ function App() {
 
                     {/*  DimDbExtractV2 List */}
                     <Route path="/data-extract-definitions" element={<DimDbExtractV2ListPage />} />
+
+                    {/* Theme List Route - NEW (Read-Only) */}
+                    <Route path="/themes" element={<ThemeListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
 

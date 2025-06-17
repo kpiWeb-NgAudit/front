@@ -137,6 +137,10 @@ function Navbar() {
                             Sources
                         </NavLink>
 
+                        <NavLink to="/themes" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
+                            Themes
+                        </NavLink>
+
 
                     </div>
                 )}

@@ -78,6 +78,12 @@ function HomePage() {
                     <p>Define and manage data sources for customers.</p>
                 </Link>
 
+                <Link to="/themes" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🎨</div> {/* Example Icon: Palette */}
+                    <h2>View System Themes</h2>
+                    <p>Browse the predefined themes used in the application.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>
