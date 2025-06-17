@@ -141,6 +141,13 @@ function Navbar() {
                             Themes
                         </NavLink>
 
+                        <NavLink to="/rdl-groups" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
+                            RDL Groups
+                        </NavLink>
+                        <NavLink to="/rdl-types" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
+                            RDL Types
+                        </NavLink>
+
 
                     </div>
                 )}

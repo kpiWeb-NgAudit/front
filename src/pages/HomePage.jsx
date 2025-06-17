@@ -84,6 +84,17 @@ function HomePage() {
                     <p>Browse the predefined themes used in the application.</p>
                 </Link>
 
+                <Link to="/rdl-groups" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">📁</div> {/* Example Icon: Folder/Group */}
+                    <h2>View RDL Groups</h2>
+                    <p>Browse groups that categorize RDL report types.</p>
+                </Link>
+                <Link to="/rdl-types" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">📄</div> {/* Example Icon: Document/Type */}
+                    <h2>View RDL Types</h2>
+                    <p>Browse predefined types for RDL reports.</p>
+                </Link>
+
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
         </div>

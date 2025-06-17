@@ -39,7 +39,9 @@ import EditExploitInstructionPage from "./pages/EditExploitInstructionPage.jsx";
 import SourceListPage from "./pages/SourceListPage.jsx";
 import AddSourcePage from "./pages/AddSourcePage.jsx";
 import EditSourcePage from "./pages/EditSourcePage.jsx";
-import ThemeListPage from "./pages/ThemeListPage.jsx"; // Import HomePage styles if not already global
+import ThemeListPage from "./pages/ThemeListPage.jsx";
+import RdlGroupListPage from "./pages/RdlGroupListPage.jsx";
+import RdlTypeListPage from "./pages/RdlTypeListPage.jsx"; // Import HomePage styles if not already global
 
 function App() {
     return (
@@ -104,6 +106,10 @@ function App() {
 
                     {/* Theme List Route - NEW (Read-Only) */}
                     <Route path="/themes" element={<ThemeListPage />} />
+
+                    {/* RDL Groups and Types Routes (Read-Only) */}
+                    <Route path="/rdl-groups" element={<RdlGroupListPage />} />
+                    <Route path="/rdl-types" element={<RdlTypeListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
 
