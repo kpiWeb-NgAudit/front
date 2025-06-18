@@ -78,6 +78,11 @@ function HomePage() {
                     <p>Define and manage data sources for customers.</p>
                 </Link>
 
+                <Link to="/rdl-lists" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">📋</div> {/* Example Icon: Clipboard/List */}
+                    <h2>RDL Lists</h2>
+                </Link>
+
                 <Link to="/themes" className="nav-card"> {/* NEW CARD */}
                     <div className="nav-card-icon">🎨</div> {/* Example Icon: Palette */}
                     <h2>View System Themes</h2>
@@ -90,10 +95,12 @@ function HomePage() {
                     <p>Browse groups that categorize RDL report types.</p>
                 </Link>
                 <Link to="/rdl-types" className="nav-card"> {/* NEW CARD */}
-                    <div className="nav-card-icon">📄</div> {/* Example Icon: Document/Type */}
+                    <div className="nav-card-icon">📄</div> {/* Example Icon: Docume
+                    nt/Type */}
                     <h2>View RDL Types</h2>
                     <p>Browse predefined types for RDL reports.</p>
                 </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>

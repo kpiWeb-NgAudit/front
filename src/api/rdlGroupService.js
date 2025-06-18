@@ -17,12 +17,12 @@ export const getAllRdlGroups = async () => {
 };
 
 // Optional: Get by ID if you ever need to display details of a single group
-// export const getRdlGroupById = async (id) => {
-//     try {
-//         const response = await axios.get(`${API_BASE_URL}/${id}`);
-//         return response.data;
-//     } catch (error) {
-//         console.error(`rdlGroupService: Error fetching RDL Group ${id}:`, error.response?.data || error.message);
-//         throw error;
-//     }
-// };
+export const getRdlGroupById = async (id) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`rdlGroupService: Error fetching RDL Group ${id}:`, error.response?.data || error.message);
+        throw error;
+    }
+};

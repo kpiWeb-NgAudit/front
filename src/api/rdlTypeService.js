@@ -17,13 +17,13 @@ export const getAllRdlTypes = async (params = {}) => { // Added params for poten
 };
 
 // Optional: Get by ID
-// export const getRdlTypeById = async (id) => {
-//     const typeIdForApi = id === "" ? "_empty_" : id; // Handle special empty string case if API needs it
-//     try {
-//         const response = await axios.get(`${API_BASE_URL}/${typeIdForApi}`);
-//         return response.data;
-//     } catch (error) {
-//         console.error(`rdlTypeService: Error fetching RDL Type ${id}:`, error.response?.data || error.message);
-//         throw error;
-//     }
-// };
+export const getRdlTypeById = async (id) => {
+    const typeIdForApi = id === "" ? "_empty_" : id; // Handle special empty string case if API needs it
+    try {
+        const response = await axios.get(`${API_BASE_URL}/${typeIdForApi}`);
+        return response.data;
+    } catch (error) {
+        console.error(`rdlTypeService: Error fetching RDL Type ${id}:`, error.response?.data || error.message);
+        throw error;
+    }
+};

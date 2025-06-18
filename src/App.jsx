@@ -41,7 +41,11 @@ import AddSourcePage from "./pages/AddSourcePage.jsx";
 import EditSourcePage from "./pages/EditSourcePage.jsx";
 import ThemeListPage from "./pages/ThemeListPage.jsx";
 import RdlGroupListPage from "./pages/RdlGroupListPage.jsx";
-import RdlTypeListPage from "./pages/RdlTypeListPage.jsx"; // Import HomePage styles if not already global
+import RdlTypeListPage from "./pages/RdlTypeListPage.jsx";
+import RdlListPage from "./pages/RdlListPage.jsx";
+import AddRdlListPage from "./pages/AddRdlListPage.jsx";
+import EditRdlListPage from "./pages/EditRdlListPage.jsx"; // Import HomePage styles if not already global
+
 
 function App() {
     return (
@@ -110,6 +114,11 @@ function App() {
                     {/* RDL Groups and Types Routes (Read-Only) */}
                     <Route path="/rdl-groups" element={<RdlGroupListPage />} />
                     <Route path="/rdl-types" element={<RdlTypeListPage />} />
+
+                    {/* RDL List Routes - NEW */}
+                    <Route path="/rdl-lists" element={<RdlListPage />} />
+                    <Route path="/rdl-lists/add" element={<AddRdlListPage />} />
+                    <Route path="/rdl-lists/edit/:id" element={<EditRdlListPage />} />
 
                     <Route path="*" element={<NotFoundPage />} />
 

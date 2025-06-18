@@ -1,48 +1,73 @@
 // src/components/Navbar.jsx
-import React, { useState, useEffect, useRef } from 'react'; // Added useEffect, useRef
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import './Navbar.css';
+import './Navbar.css'; // Make sure this file exists and styles the dropdown
 
 function Navbar() {
     const [isEntityDropdownOpen, setIsEntityDropdownOpen] = useState(false);
-    const dropdownRef = useRef(null); // For detecting clicks outside
+    const [isLookupDropdownOpen, setIsLookupDropdownOpen] = useState(false); // <<< NEW STATE for Lookups dropdown
+
+    const entityDropdownRef = useRef(null);
+    const lookupDropdownRef = useRef(null); // <<< NEW REF for Lookups dropdown
 
     const toggleEntityDropdown = () => {
         setIsEntityDropdownOpen(!isEntityDropdownOpen);
+        setIsLookupDropdownOpen(false); // Close other dropdown
     };
 
-    const closeDropdown = () => {
+    const toggleLookupDropdown = () => { // <<< NEW TOGGLE function for Lookups
+        setIsLookupDropdownOpen(!isLookupDropdownOpen);
+        setIsEntityDropdownOpen(false); // Close other dropdown
+    };
+
+    const closeAllDropdowns = () => {
         setIsEntityDropdownOpen(false);
+        setIsLookupDropdownOpen(false);
     };
 
-    // Effect to handle clicks outside the dropdown to close it
+    // Effect to handle clicks outside to close dropdowns
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                closeDropdown();
+            if (entityDropdownRef.current && !entityDropdownRef.current.contains(event.target) &&
+                lookupDropdownRef.current && !lookupDropdownRef.current.contains(event.target)) {
+                // More robust: check if click is outside BOTH dropdowns
+                // Simplified: if click is outside the one that might be open
+                if (!entityDropdownRef.current?.contains(event.target)) {
+                    setIsEntityDropdownOpen(false);
+                }
+                if (!lookupDropdownRef.current?.contains(event.target)) {
+                    setIsLookupDropdownOpen(false);
+                }
+            } else if (entityDropdownRef.current && !entityDropdownRef.current.contains(event.target)) {
+                setIsEntityDropdownOpen(false);
+            } else if (lookupDropdownRef.current && !lookupDropdownRef.current.contains(event.target)) {
+                setIsLookupDropdownOpen(false);
             }
         };
 
-        // Bind the event listener
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            // Unbind the event listener on clean up
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [dropdownRef]); // Only re-run if dropdownRef changes (it won't)
+    }, []); // Empty dependency array, runs once
+
+    const getNavLinkClass = ({ isActive }) => isActive ? "dropdown-item active" : "dropdown-item";
+    const getMainNavLinkClass = ({ isActive }) => isActive ? "nav-link active" : "nav-link";
+
 
     return (
         <nav className="app-navbar">
             <NavLink
                 to="/"
-                className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-                onClick={closeDropdown}
+                className={getMainNavLinkClass}
+                onClick={closeAllDropdowns} // Close all dropdowns when Home is clicked
                 end
             >
                 Home
             </NavLink>
 
-            <div className="nav-item-dropdown" ref={dropdownRef}> {/* Wrapper with ref */}
+            {/* Manage Entities Dropdown */}
+            <div className="nav-item-dropdown" ref={entityDropdownRef}>
                 <button
                     type="button"
                     className="nav-link dropdown-toggle"
@@ -50,105 +75,43 @@ function Navbar() {
                     aria-expanded={isEntityDropdownOpen}
                     aria-haspopup="true"
                 >
-                    Manage Entities {isEntityDropdownOpen ? '▲' : '▼'} {/* Better toggle indicator */}
+                    Manage Entities {isEntityDropdownOpen ? '▲' : '▼'}
                 </button>
                 {isEntityDropdownOpen && (
                     <div className="dropdown-menu">
-                        <NavLink
-                            to="/customers"
-                            className="dropdown-item" // Use a consistent class for NavLink styling
-                            activeclassname="active" // For react-router v6, activeClassName is deprecated, use style or className callback
-                            onClick={closeDropdown}
-                        >
-                            Customers
-                        </NavLink>
-                        <NavLink
-                            to="/dimensions"
-                            className="dropdown-item"
-                            activeclassname="active"
-                            onClick={closeDropdown}
-                        >
-                            Dimensions
-                        </NavLink>
-                        <NavLink
-                            to="/facts"
-                            className="dropdown-item"
-                            activeclassname="active"
-                            onClick={closeDropdown}
-                        >
-                            Facts
-                        </NavLink>
-                        <NavLink
-                            to="/hierarchies"
-                            className="dropdown-item" // CONSISTENT CLASS
-                            activeclassname="active"  // For active state
-                            onClick={closeDropdown}
-                        >
-                            Hierarchies
-                        </NavLink>
-                        {/* Add other entities like HierDimCols if they have their own top-level list page */}
-                        <NavLink
-                            to="/hierdimcols"
-                            className="dropdown-item"
-                            onClick={closeDropdown}
-                        >
-                            Hierarchy Levels
-                        </NavLink>
+                        <NavLink to="/customers" className={getNavLinkClass} onClick={closeAllDropdowns}>Customers</NavLink>
+                        <NavLink to="/dimensions" className={getNavLinkClass} onClick={closeAllDropdowns}>Dimensions</NavLink>
+                        <NavLink to="/facts" className={getNavLinkClass} onClick={closeAllDropdowns}>Facts</NavLink>
+                        <NavLink to="/hierarchies" className={getNavLinkClass} onClick={closeAllDropdowns}>Hierarchies</NavLink>
+                        <NavLink to="/roles" className={getNavLinkClass} onClick={closeAllDropdowns}>Roles</NavLink>
+                        <NavLink to="/users" className={getNavLinkClass} onClick={closeAllDropdowns}>Users</NavLink>
+                        <NavLink to="/cubesets" className={getNavLinkClass} onClick={closeAllDropdowns}>Cubesets</NavLink>
+                        <NavLink to="/exploit-instructions" className={getNavLinkClass} onClick={closeAllDropdowns}>Exploit Instructions</NavLink>
+                        <NavLink to="/sources" className={getNavLinkClass} onClick={closeAllDropdowns}>Sources</NavLink>
+                        <NavLink to="/rdl-lists" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Lists</NavLink>
+                    </div>
+                )}
+            </div>
 
-
-                        <NavLink // NEW LINK FOR ROLES
-                            to="/roles"
-                            className="dropdown-item"
-                            // className={({ isActive }) => isActive ? "dropdown-item active" : "dropdown-item"}
-                            onClick={closeDropdown}
-                        >
-                            Roles
-                        </NavLink>
-
-                        <NavLink to="/users" className="dropdown-item" onClick={closeDropdown}>
-                            Users
-                        </NavLink>
-
-                        <NavLink to="/cubesets" className="dropdown-item" onClick={closeDropdown}>
-                            Cubesets
-                        </NavLink>
-
-                        <NavLink
-                            to="/customer-user-assignments"
-                            className="dropdown-item"
-                            onClick={closeDropdown}
-                        >
-                            Customer-User Links
-                        </NavLink>
-
-                        <NavLink
-                            to="/data-extract-definitions"
-                            className="dropdown-item"
-                            onClick={closeDropdown}
-                        >
-                            Data Extracts
-                        </NavLink>
-
-                        <NavLink to="/exploit-instructions" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
-                            Exploit Instructions
-                        </NavLink>
-
-                        <NavLink to="/sources" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
-                            Sources
-                        </NavLink>
-
-                        <NavLink to="/themes" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
-                            Themes
-                        </NavLink>
-
-                        <NavLink to="/rdl-groups" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
-                            RDL Groups
-                        </NavLink>
-                        <NavLink to="/rdl-types" className="dropdown-item" onClick={closeDropdown}> {/* NEW */}
-                            RDL Types
-                        </NavLink>
-
-
+            {/* View Lookups Dropdown - CORRECTED */}
+            <div className="nav-item-dropdown" ref={lookupDropdownRef}>
+                <button
+                    type="button"
+                    className="nav-link dropdown-toggle"
+                    onClick={toggleLookupDropdown} // Use the new toggle function
+                    aria-expanded={isLookupDropdownOpen}
+                    aria-haspopup="true"
+                >
+                    View Lookups {isLookupDropdownOpen ? '▲' : '▼'}
+                </button>
+                {isLookupDropdownOpen && ( // Use the new state variable for visibility
+                    <div className="dropdown-menu">
+                        <NavLink to="/themes" className={getNavLinkClass} onClick={closeAllDropdowns}>Themes</NavLink>
+                        <NavLink to="/rdl-groups" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Groups</NavLink>
+                        <NavLink to="/rdl-types" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Types</NavLink>
+                        <NavLink to="/data-extract-definitions" className={getNavLinkClass} onClick={closeAllDropdowns}>Data Extracts (All)</NavLink>
+                        <NavLink to="/customer-user-assignments" className={getNavLinkClass} onClick={closeAllDropdowns}>Customer-User Links</NavLink>
+                         <NavLink to="/hierdimcols" className={getNavLinkClass} onClick={closeAllDropdowns}>Hierarchy Levels</NavLink>
                     </div>
                 )}
             </div>
