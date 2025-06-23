@@ -51,7 +51,9 @@ import EditPerspectivePage from "./pages/EditPerspectivePage.jsx";
 import PerspectiveFactAssociationListPage from "./pages/PerspectiveFactAssociationListPage.jsx";
 import FactColumnListPage from "./pages/FactColumnListPage.jsx";
 import AddFactColumnPage from "./pages/AddFactColumnPage.jsx";
-import EditFactColumnPage from "./pages/EditFactColumnPage.jsx"; // Import HomePage styles if not already global
+import EditFactColumnPage from "./pages/EditFactColumnPage.jsx";
+import RdlGroupFactColListPage from "./pages/RdlGroupFactColListPage.jsx";
+import EditRdlGroupPage from "./pages/EditRdlGroupPage.jsx"; // Import HomePage styles if not already global
 
 
 function App() {
@@ -121,6 +123,8 @@ function App() {
                     {/* RDL Groups and Types Routes (Read-Only) */}
                     <Route path="/rdl-groups" element={<RdlGroupListPage />} />
                     <Route path="/rdl-types" element={<RdlTypeListPage />} />
+                    <Route path="/rdl-groups/edit/:id" element={<EditRdlGroupPage />} /> {/* <<< NEW ROUTE */}
+
 
                     {/* RDL List Routes */}
                     <Route path="/rdl-lists" element={<RdlListPage />} />
@@ -138,6 +142,10 @@ function App() {
                     <Route path="/fact-columns" element={<FactColumnListPage />} />
                     <Route path="/fact-columns/add" element={<AddFactColumnPage />} />
                     <Route path="/fact-columns/edit/:id" element={<EditFactColumnPage />} />
+
+                    {/*  RdlGroup-FactCol Associations List */}
+                    <Route path="/rdlgroup-factcol-assignments" element={<RdlGroupFactColListPage />} />
+
 
 
                     <Route path="*" element={<NotFoundPage />} />

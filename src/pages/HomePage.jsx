@@ -117,6 +117,11 @@ function HomePage() {
                     <h2>Fact Columns</h2>
                 </Link>
 
+                <Link to="/rdlgroup-factcol-assignments" className="nav-card"> {/* NEW */}
+                    <div className="nav-card-icon">⚙️➕🏛️</div> {/* Gear + Column */}
+                    <h2>View RDLGroup CalcTypes</h2>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
