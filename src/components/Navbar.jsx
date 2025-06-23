@@ -90,6 +90,7 @@ function Navbar() {
                         <NavLink to="/sources" className={getNavLinkClass} onClick={closeAllDropdowns}>Sources</NavLink>
                         <NavLink to="/rdl-lists" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Lists</NavLink>
                         <NavLink to="/perspectives" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspectives </NavLink>
+                        <NavLink to="/fact-columns" className={getNavLinkClass} onClick={closeAllDropdowns}>Fact Columns</NavLink>
                     </div>
                 )}
             </div>

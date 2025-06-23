@@ -48,7 +48,10 @@ import EditRdlListPage from "./pages/EditRdlListPage.jsx";
 import PerspectiveListPage from "./pages/PerspectiveListPage.jsx";
 import AddPerspectivePage from "./pages/AddPerspectivePage.jsx";
 import EditPerspectivePage from "./pages/EditPerspectivePage.jsx";
-import PerspectiveFactAssociationListPage from "./pages/PerspectiveFactAssociationListPage.jsx"; // Import HomePage styles if not already global
+import PerspectiveFactAssociationListPage from "./pages/PerspectiveFactAssociationListPage.jsx";
+import FactColumnListPage from "./pages/FactColumnListPage.jsx";
+import AddFactColumnPage from "./pages/AddFactColumnPage.jsx";
+import EditFactColumnPage from "./pages/EditFactColumnPage.jsx"; // Import HomePage styles if not already global
 
 
 function App() {
@@ -130,6 +133,11 @@ function App() {
                     <Route path="/perspectives/edit/:id" element={<EditPerspectivePage />} />
 
                     <Route path="/perspective-fact-links" element={<PerspectiveFactAssociationListPage />} />
+
+                    {/* Fact Column Routes  */}
+                    <Route path="/fact-columns" element={<FactColumnListPage />} />
+                    <Route path="/fact-columns/add" element={<AddFactColumnPage />} />
+                    <Route path="/fact-columns/edit/:id" element={<EditFactColumnPage />} />
 
 
                     <Route path="*" element={<NotFoundPage />} />
