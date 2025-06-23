@@ -44,7 +44,11 @@ import RdlGroupListPage from "./pages/RdlGroupListPage.jsx";
 import RdlTypeListPage from "./pages/RdlTypeListPage.jsx";
 import RdlListPage from "./pages/RdlListPage.jsx";
 import AddRdlListPage from "./pages/AddRdlListPage.jsx";
-import EditRdlListPage from "./pages/EditRdlListPage.jsx"; // Import HomePage styles if not already global
+import EditRdlListPage from "./pages/EditRdlListPage.jsx";
+import PerspectiveListPage from "./pages/PerspectiveListPage.jsx";
+import AddPerspectivePage from "./pages/AddPerspectivePage.jsx";
+import EditPerspectivePage from "./pages/EditPerspectivePage.jsx";
+import PerspectiveFactAssociationListPage from "./pages/PerspectiveFactAssociationListPage.jsx"; // Import HomePage styles if not already global
 
 
 function App() {
@@ -108,17 +112,25 @@ function App() {
                     {/*  DimDbExtractV2 List */}
                     <Route path="/data-extract-definitions" element={<DimDbExtractV2ListPage />} />
 
-                    {/* Theme List Route - NEW (Read-Only) */}
+                    {/* Theme List Route  (Read-Only) */}
                     <Route path="/themes" element={<ThemeListPage />} />
 
                     {/* RDL Groups and Types Routes (Read-Only) */}
                     <Route path="/rdl-groups" element={<RdlGroupListPage />} />
                     <Route path="/rdl-types" element={<RdlTypeListPage />} />
 
-                    {/* RDL List Routes - NEW */}
+                    {/* RDL List Routes */}
                     <Route path="/rdl-lists" element={<RdlListPage />} />
                     <Route path="/rdl-lists/add" element={<AddRdlListPage />} />
                     <Route path="/rdl-lists/edit/:id" element={<EditRdlListPage />} />
+
+                    {/* Perspective Routes  */}
+                    <Route path="/perspectives" element={<PerspectiveListPage />} />
+                    <Route path="/perspectives/add" element={<AddPerspectivePage />} />
+                    <Route path="/perspectives/edit/:id" element={<EditPerspectivePage />} />
+
+                    <Route path="/perspective-fact-links" element={<PerspectiveFactAssociationListPage />} />
+
 
                     <Route path="*" element={<NotFoundPage />} />
 

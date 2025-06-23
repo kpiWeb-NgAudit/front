@@ -6,6 +6,8 @@ import CustomerRoleManager from '../components/CustomerRoleManager'; // <<< NEW 
 import { getCustomerById, updateCustomer } from '../api/customerService';
 import CustomerUserAssignmentManager from "../components/CustomerUserAssignmentManager.jsx";
 import CustomerCubesetManager from "../components/CustomerCubesetManager.jsx";
+import CustomerPerspectiveManager from '../components/CustomerPerspectiveManager'; // <<< NEW IMPORT
+
 
 function EditCustomerPage() {
     const navigate = useNavigate();
@@ -80,6 +82,9 @@ function EditCustomerPage() {
 
             <hr style={{ margin: '30px 0' }} /> {/* Separator for Cubesets */}
             {customerId && <CustomerCubesetManager customerId={customerId} />} {/* <<< NEW INTEGRATION */}
+
+            <hr style={{ margin: '30px 0' }} /> {/* Separator for Perspectives */}
+            {customerId && <CustomerPerspectiveManager customerId={customerId} />} {/* <<< NEW */}
 
 
 

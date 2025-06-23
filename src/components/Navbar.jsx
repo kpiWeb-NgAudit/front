@@ -89,6 +89,7 @@ function Navbar() {
                         <NavLink to="/exploit-instructions" className={getNavLinkClass} onClick={closeAllDropdowns}>Exploit Instructions</NavLink>
                         <NavLink to="/sources" className={getNavLinkClass} onClick={closeAllDropdowns}>Sources</NavLink>
                         <NavLink to="/rdl-lists" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Lists</NavLink>
+                        <NavLink to="/perspectives" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspectives </NavLink>
                     </div>
                 )}
             </div>
@@ -112,6 +113,7 @@ function Navbar() {
                         <NavLink to="/data-extract-definitions" className={getNavLinkClass} onClick={closeAllDropdowns}>Data Extracts (All)</NavLink>
                         <NavLink to="/customer-user-assignments" className={getNavLinkClass} onClick={closeAllDropdowns}>Customer-User Links</NavLink>
                          <NavLink to="/hierdimcols" className={getNavLinkClass} onClick={closeAllDropdowns}>Hierarchy Levels</NavLink>
+                        <NavLink to="/perspective-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective-Fact Links</NavLink>
                     </div>
                 )}
             </div>

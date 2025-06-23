@@ -101,6 +101,17 @@ function HomePage() {
                     <p>Browse predefined types for RDL reports.</p>
                 </Link>
 
+                <Link to="/perspectives" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">👓</div> {/* Example Icon: Glasses/Viewpoint */}
+                    <h2>Perspectives</h2>
+                </Link>
+
+                <Link to="/perspective-fact-links" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🔗➕📊</div>
+                    <h2>View Perspective-Fact Links</h2>
+                    <p>Audit all associations between perspectives and facts.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
