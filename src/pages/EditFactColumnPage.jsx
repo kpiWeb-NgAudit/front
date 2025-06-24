@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FactColumnForm from '../components/FactColumnForm';
 import { getFactColumnById, updateFactColumn } from '../api/factColumnService';
+import FactColumnCalcTypeManager from '../components/FactColumnCalcTypeManager'; // <<< NEW IMPORT
+
 
 function EditFactColumnPage() {
     const navigate = useNavigate();
@@ -50,6 +52,13 @@ function EditFactColumnPage() {
                 isEditMode={true}
                 parentFactIdPk={factColumn.factIdPk} // For context in form
             />
+
+            <hr style={{ margin: '30px 0' }} />
+            {/* Manager for CalcType associations for this FactColumn */}
+            {!isNaN(numericId) && (
+                <FactColumnCalcTypeManager factcolIdPk={numericId} />
+
+            )}
         </div>
     );
 }

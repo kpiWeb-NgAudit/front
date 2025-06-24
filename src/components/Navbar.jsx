@@ -112,10 +112,12 @@ function Navbar() {
                         <NavLink to="/themes" className={getNavLinkClass} onClick={closeAllDropdowns}>Themes</NavLink>
                         <NavLink to="/rdl-groups" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Groups</NavLink>
                         <NavLink to="/rdl-types" className={getNavLinkClass} onClick={closeAllDropdowns}>RDL Types</NavLink>
+                        <NavLink to="/calculation-types" className={getNavLinkClass} onClick={closeAllDropdowns}>Calculation Types</NavLink>
                         <NavLink to="/data-extract-definitions" className={getNavLinkClass} onClick={closeAllDropdowns}>Data Extracts (All)</NavLink>
                         <NavLink to="/customer-user-assignments" className={getNavLinkClass} onClick={closeAllDropdowns}>Customer-User Links</NavLink>
                          <NavLink to="/hierdimcols" className={getNavLinkClass} onClick={closeAllDropdowns}>Hierarchy Levels</NavLink>
                         <NavLink to="/perspective-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective-Fact Links</NavLink>
+                        <NavLink to="/calctype-factcol-settings" className={getNavLinkClass} onClick={closeAllDropdowns}>FactCol CalcType Settings</NavLink>
                     </div>
                 )}
             </div>

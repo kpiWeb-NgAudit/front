@@ -122,6 +122,18 @@ function HomePage() {
                     <h2>View RDLGroup CalcTypes</h2>
                 </Link>
 
+                <Link to="/calculation-types" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">🧮</div> {/* Example Icon: Abacus/Calculator */}
+                    <h2>View Calculation Types</h2>
+                    <p>Browse predefined calculation type definitions.</p>
+                </Link>
+
+                <Link to="/calctype-factcol-settings" className="nav-card"> {/* NEW */}
+                    <div className="nav-card-icon">🏛️⚙️</div> {/* Column + Gear */}
+                    <h2>View FactCol CalcType Settings</h2>
+                    <p>Audit specific calculation settings applied to fact columns.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
