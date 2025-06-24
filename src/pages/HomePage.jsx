@@ -134,6 +134,12 @@ function HomePage() {
                     <p>Audit specific calculation settings applied to fact columns.</p>
                 </Link>
 
+                <Link to="/perspective-outcalculations" className="nav-card"> {/* NEW CARD */}
+                    <div className="nav-card-icon">👓🖩</div> {/* Example: Glasses + Calculator */}
+                    <h2>Perspective Outcalculations</h2>
+                    <p>View links between perspectives and outcalculation strings.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>

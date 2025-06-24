@@ -55,6 +55,8 @@ import EditFactColumnPage from "./pages/EditFactColumnPage.jsx";
 import RdlGroupFactColListPage from "./pages/RdlGroupFactColListPage.jsx";
 import CalcTypeListPage from "./pages/CalcTypeListPage.jsx";
 import CalcTypeFactColListPage from "./pages/CalcTypeFactColListPage.jsx";
+import PerspectiveOutcalculationListPage from "./pages/PerspectiveOutcalculationListPage.jsx";
+import AddPerspectiveOutcalculationPage from "./pages/AddPerspectiveOutcalculationPage.jsx";
 //import EditRdlGroupPage from "./pages/EditRdlGroupPage.jsx"; // Import HomePage styles if not already global
 
 
@@ -153,6 +155,11 @@ function App() {
 
                     {/* CalcType-FactCol Associations List */}
                     <Route path="/calctype-factcol-settings" element={<CalcTypeFactColListPage />} />
+
+                    {/* Perspective-Outcalculation Routes  */}
+                    <Route path="/perspective-outcalculations" element={<PerspectiveOutcalculationListPage />} />
+                    <Route path="/perspective-outcalculations/add" element={<AddPerspectiveOutcalculationPage />} />
+                    {/* No edit route for this simple join table */}
 
 
                     <Route path="*" element={<NotFoundPage/>}/>
