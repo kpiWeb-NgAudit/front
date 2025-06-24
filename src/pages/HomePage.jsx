@@ -140,6 +140,12 @@ function HomePage() {
                     <p>View links between perspectives and outcalculation strings.</p>
                 </Link>
 
+                <Link to="/source-fact-links" className="nav-card">
+                    <div className="nav-card-icon">💾↔️📈</div> {/* Icône : Source ↔️ Fait */}
+                    <h2>View Source-Fact Links</h2>
+                    <p>Audit all associations between data sources and facts.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>

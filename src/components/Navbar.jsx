@@ -119,6 +119,7 @@ function Navbar() {
                          <NavLink to="/hierdimcols" className={getNavLinkClass} onClick={closeAllDropdowns}>Hierarchy Levels</NavLink>
                         <NavLink to="/perspective-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective-Fact Links</NavLink>
                         <NavLink to="/calctype-factcol-settings" className={getNavLinkClass} onClick={closeAllDropdowns}>FactCol CalcType Settings</NavLink>
+                        <NavLink to="/source-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Source-Fact Links</NavLink>
                     </div>
                 )}
             </div>
