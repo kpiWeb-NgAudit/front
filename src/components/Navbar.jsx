@@ -120,6 +120,7 @@ function Navbar() {
                         <NavLink to="/perspective-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective-Fact Links</NavLink>
                         <NavLink to="/calctype-factcol-settings" className={getNavLinkClass} onClick={closeAllDropdowns}>FactCol CalcType Settings</NavLink>
                         <NavLink to="/source-fact-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Source-Fact Links</NavLink>
+                        <NavLink to="/olap-query-logs" className={getNavLinkClass} onClick={closeAllDropdowns}>OLAP Query Logs</NavLink>
                     </div>
                 )}
             </div>

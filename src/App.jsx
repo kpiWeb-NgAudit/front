@@ -58,6 +58,7 @@ import CalcTypeFactColListPage from "./pages/CalcTypeFactColListPage.jsx";
 import PerspectiveOutcalculationListPage from "./pages/PerspectiveOutcalculationListPage.jsx";
 import AddPerspectiveOutcalculationPage from "./pages/AddPerspectiveOutcalculationPage.jsx";
 import SourceFactAssociationListPage from "./pages/SourceFactAssociationListPage.jsx";
+import OlapQueryLogPage from "./pages/OlapQueryLogPage.jsx";
 //import EditRdlGroupPage from "./pages/EditRdlGroupPage.jsx"; // Import HomePage styles if not already global
 
 
@@ -163,6 +164,8 @@ function App() {
                     {/* No edit route for this simple join table */}
 
                     <Route path="/source-fact-links" element={<SourceFactAssociationListPage />} />
+
+                    <Route path="/olap-query-logs" element={<OlapQueryLogPage />} />
 
 
 

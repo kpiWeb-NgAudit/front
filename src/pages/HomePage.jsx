@@ -146,6 +146,12 @@ function HomePage() {
                     <p>Audit all associations between data sources and facts.</p>
                 </Link>
 
+                <Link to="/olap-query-logs" className="nav-card">
+                    <div className="nav-card-icon">🔎📜</div> {/* Icône : Loupe + Parchemin */}
+                    <h2>OLAP Query Logs</h2>
+                    <p>Consult and filter query logs from the OLAP server.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
