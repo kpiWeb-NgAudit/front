@@ -163,6 +163,12 @@ function HomePage() {
                     <p>View all defined database extraction configurations for facts.</p>
                 </Link>
 
+                <Link to="/role-dimcol-permissions" className="nav-card">
+                    <div className="nav-card-icon">🛡️🏛️</div>
+                    <h2>Role Column Permissions</h2>
+                    <p>View all permission settings for roles on dimension columns.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>

@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import RoleForm from '../components/RoleForm';
 import { getRoleById, updateRole } from '../api/roleService';
+import RolePermissionManager from '../components/RolePermissionManager'; // <<< AJOUTER
+
 
 function EditRolePage() {
     const navigate = useNavigate();
@@ -62,6 +64,8 @@ function EditRolePage() {
                 parentCubeIdPk={role.cube_id_pk}
             />
             {/* If roles have sub-entities to manage (like role_users), a manager component would go here */}
+            {/* <<< AJOUTER LE MANAGER ICI >>> */}
+            <RolePermissionManager roleId={id} />
         </div>
     );
 }
