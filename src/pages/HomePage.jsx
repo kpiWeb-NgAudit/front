@@ -152,6 +152,11 @@ function HomePage() {
                     <p>Consult and filter query logs from the OLAP server.</p>
                 </Link>
 
+                <Link to="/perspective-dimension-links" className="nav-card"> {/* NOUVEAU */}
+                    <div className="nav-card-icon">👓🔗📏</div>
+                    <h2>Perspective-Dimension Links</h2>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>

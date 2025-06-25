@@ -93,6 +93,8 @@ function Navbar() {
                         <NavLink to="/fact-columns" className={getNavLinkClass} onClick={closeAllDropdowns}>Fact Columns</NavLink>
                         <NavLink to="/rdlgroup-factcol-assignments" className={getNavLinkClass} onClick={closeAllDropdowns}>RDLGroup-FactCol CalcTypes</NavLink>
                         <NavLink to="/perspective-outcalculations" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective Outcalculations</NavLink>
+                        <NavLink to="/perspective-dimension-links" className={getNavLinkClass} onClick={closeAllDropdowns}>Perspective-Dimension Links</NavLink> {/* NOUVEAU */}
+
                     </div>
                 )}
             </div>

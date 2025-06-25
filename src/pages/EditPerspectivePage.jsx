@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PerspectiveForm from '../components/PerspectiveForm';
 import { getPerspectiveById, updatePerspective } from '../api/perspectiveService';
 import PerspectiveFactAssociationManager from '../components/PerspectiveFactAssociationManager'; // <<< NEW IMPORT
+import PerspectiveDimensionAssociationManager from '../components/PerspectiveDimensionAssociationManager'; // <<< NOUVEL IMPORT
 
 function EditPerspectivePage() {
     const navigate = useNavigate();
@@ -59,6 +60,13 @@ function EditPerspectivePage() {
             {!isNaN(numericId) && (
                 <PerspectiveFactAssociationManager perspectiveId={numericId} />
             )}
+
+            <hr style={{ margin: '30px 0' }} /> {/* Séparateur pour les Associations de Dimension */}
+            <h3>Associated Dimensions (DimNat)</h3>
+            {!isNaN(numericId) && (
+                <PerspectiveDimensionAssociationManager perspectiveId={numericId} /> // <<< NOUVEAU MANAGER
+            )}
+
         </div>
     );
 }
