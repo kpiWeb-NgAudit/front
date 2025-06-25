@@ -3,6 +3,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import FactForm from '../components/FactForm';
 import { getFactById, updateFact } from '../api/factService';
+import FactDbExtractManager from '../components/FactDbExtractManager'; // <<< AJOUTER L'IMPORT
+
 
 function EditFactPage() {
     const navigate = useNavigate();
@@ -58,6 +60,8 @@ function EditFactPage() {
                 initialData={fact}
                 isEditMode={true}
             />
+            {/* <<< AJOUTER LE MANAGER ICI >>> */}
+            <FactDbExtractManager factId={id} customerId={fact.cube_id_pk} />
         </div>
     );
 }

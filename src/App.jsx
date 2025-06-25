@@ -60,6 +60,7 @@ import AddPerspectiveOutcalculationPage from "./pages/AddPerspectiveOutcalculati
 import SourceFactAssociationListPage from "./pages/SourceFactAssociationListPage.jsx";
 import OlapQueryLogPage from "./pages/OlapQueryLogPage.jsx";
 import PerspDimnatListPage from "./pages/PerspDimnatListPage.jsx";
+import FactDbExtractV2ListPage from "./pages/FactDbExtractV2ListPage.jsx";
 //import EditRdlGroupPage from "./pages/EditRdlGroupPage.jsx"; // Import HomePage styles if not already global
 
 
@@ -169,6 +170,9 @@ function App() {
                     <Route path="/olap-query-logs" element={<OlapQueryLogPage />} />
 
                     <Route path="/perspective-dimension-links" element={<PerspDimnatListPage />} /> {/* NOUVELLE ROUTE */}
+
+                    <Route path="/fact-db-extracts" element={<FactDbExtractV2ListPage />} />
+
 
 
 

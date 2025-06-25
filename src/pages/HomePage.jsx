@@ -157,6 +157,12 @@ function HomePage() {
                     <h2>Perspective-Dimension Links</h2>
                 </Link>
 
+                <Link to="/fact-db-extracts" className="nav-card">
+                    <div className="nav-card-icon">📜⚙️</div>
+                    <h2>Fact DB Extracts</h2>
+                    <p>View all defined database extraction configurations for facts.</p>
+                </Link>
+
 
                 {/* Add more cards here for other sections if needed in the future */}
             </nav>
