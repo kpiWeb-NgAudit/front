@@ -5,13 +5,14 @@ import { BASE_URL } from '../config/apiConfig';
 
 const API_BASE_URL = `${BASE_URL}/api/customer`;
 
-export const getAllCustomers = async (params = {}) => { // Added params for consistency
-    console.log("customerService: getAllCustomers called with params:", params);
+// Dans src/api/customerService.js
+
+export const getAllCustomers = async () => {
+    console.log("customerService: Calling GET /api/customers (no limit)");
     try {
-        const response = await axios.get(API_BASE_URL, { params }); // API_BASE_URL for customers
-        console.log("customerService: API response data for customers:", response.data);
-        // THIS DIRECTLY RETURNS THE ARRAY (or whatever response.data is)
-        // It DOES NOT return { data: ..., headers: ... } like your newer services
+        // On fait un appel simple sans aucun paramètre pour tout récupérer
+        const response = await axios.get(API_BASE_URL);
+        console.log(`[API RESPONSE] Received ${response.data.length} customers.`);
         return response.data;
     } catch (error) {
         console.error("customerService: Error in getAllCustomers:", error.response?.data || error.message);
@@ -22,6 +23,14 @@ export const getAllCustomers = async (params = {}) => { // Added params for cons
 export const getCustomerById = async (id) => {
     const response = await axios.get(`${API_BASE_URL}/${id}`);
     return response.data;
+};
+
+export const getPaginatedCustomers = async (pageNumber = 1, pageSize = 10) => {
+    // Cette fonction n'est plus compatible avec notre nouvelle logique simple.
+    // Vous devriez la recoder si vous en avez besoin pour une page de liste de clients.
+    // Pour l'instant, on se concentre sur le besoin des filtres.
+    console.warn("getPaginatedCustomers is deprecated with the new controller logic.");
+    return getAllCustomers(); // Pour l'instant, elle retourne tout.
 };
 
 

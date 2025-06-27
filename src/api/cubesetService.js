@@ -3,13 +3,14 @@ import axios from 'axios';
 import { BASE_URL } from '../config/apiConfig';
 
 
-const API_BASE_URL = `${BASE_URL}/api/cubesets`; // Your CubesetsController base URL
+const API_BASE_URL = `${BASE_URL}/api/cubesets`;
 
 export const getAllCubesets = async (params = {}) => {
     // params can include { cubeIdPk: 'customerXYZ', pageNumber: 1, pageSize: 10 }
     console.log("cubesetService: getAllCubesets called with params:", params);
     try {
         const response = await axios.get(API_BASE_URL, { params });
+        console.log(`%c[API RESPONSE] Received ${response.data.length} cubesets. Data:`, 'background: #222; color: #bada55', response.data);
         return { data: response.data, headers: response.headers }; // For pagination
     } catch (error) {
         console.error("cubesetService: Error in getAllCubesets:", error.response?.data || error.message);

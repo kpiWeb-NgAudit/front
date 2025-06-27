@@ -1,73 +1,101 @@
-// src/pages/CubesetListPage.jsx
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getAllCubesets, deleteCubeset as apiDeleteCubeset } from '../api/cubesetService';
-import { getAllCustomers } from '../api/customerService'; // To populate customer filter
-import CubesetList from '../components/CubesetList'; // Your existing CubesetList component
+import { getAllCustomers } from '../api/customerService';
+import CubesetList from '../components/CubesetList';
 
 function CubesetListPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [cubesets, setCubesets] = useState([]);
-    const [customers, setCustomers] = useState([]); // For filter dropdown
+    const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const [selectedCubeId, setSelectedCubeId] = useState(searchParams.get('cubeIdPk') || '');
-    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('pageNumber')) || 1);
-    const [pageSize] = useState(10); // Or make configurable
+    const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('pageNumber'), 10) || 1);
     const [totalPages, setTotalPages] = useState(0);
+    const pageSize = 10;
 
-    const fetchCubesetsAndCustomers = useCallback(async (page = currentPage) => {
+    // Version finale et correcte de la fonction, à placer dans votre CubesetListPage.jsx
+
+    const fetchCubesetsAndCustomers = useCallback(async () => {
         setLoading(true);
         setError(null);
+
         try {
-            const paramsForCubesets = { pageNumber: page, pageSize };
+            // 1. Préparer les paramètres pour la requête des cubesets (qui est paginée)
+            const cubesetParams = {
+                pageNumber: currentPage,
+                pageSize: pageSize // pageSize est défini dans le scope du composant, ex: const pageSize = 10;
+            };
             if (selectedCubeId) {
-                paramsForCubesets.cubeIdPk = selectedCubeId;
+                cubesetParams.cubeIdPk = selectedCubeId;
             }
 
-            const [cubesetsResponse, custDataResponse] = await Promise.all([
-                getAllCubesets(paramsForCubesets),
-                // Fetch customers only if list is empty, to avoid refetching on every page change unless necessary
-                customers.length === 0 ? getAllCustomers({ pageSize: 1000 }) : Promise.resolve({ data: customers })
+            // 2. Lancer les deux appels API en parallèle
+            const [cubesetsResponse, customersData] = await Promise.all([
+                // Appel pour les cubesets, qui retourne { data, headers }
+                getAllCubesets(cubesetParams),
+
+                // Appel pour les clients :
+                // - On ne le fait qu'une seule fois (si la liste est vide).
+                // - Il appelle la nouvelle version simple de getAllCustomers() qui retourne directement les données.
+                customers.length === 0 ? getAllCustomers() : Promise.resolve(customers)
             ]);
 
+            // 3. Mettre à jour l'état avec les résultats
+
+            // Mettre à jour les cubesets et la pagination
             setCubesets(cubesetsResponse.data || []);
-            if (customers.length === 0 && custDataResponse.data) { // Only set if fetched
-                setCustomers(custDataResponse.data || []);
-            }
+            const totalPagesHeader = cubesetsResponse.headers['x-pagination-totalpages'];
+            setTotalPages(totalPagesHeader ? parseInt(totalPagesHeader, 10) : 0);
 
-
-            const totalItemsHeader = cubesetsResponse.headers['x-pagination-totalitems'];
-            const pageSizeHeader = cubesetsResponse.headers['x-pagination-pagesize'];
-            if (totalItemsHeader && pageSizeHeader) {
-                setTotalPages(Math.ceil(parseInt(totalItemsHeader) / parseInt(pageSizeHeader)));
-            } else {
-                setTotalPages(cubesetsResponse.data && cubesetsResponse.data.length > 0 ? Math.ceil(cubesetsResponse.data.length / pageSize) : 0);
+            // Mettre à jour la liste des clients si elle vient d'être chargée
+            if (customers.length === 0) {
+                setCustomers(customersData || []);
             }
-            setCurrentPage(page);
 
         } catch (err) {
-            console.error("Error fetching cubesets/customers:", err);
-            setError(err.message || "Failed to load data.");
-            setCubesets([]);
-            // setCustomers([]); // Don't clear customers if it was just cubesets failing
+            console.error("Error fetching page data:", err);
+            setError(err.message || "Failed to load data. Please try again.");
         } finally {
             setLoading(false);
         }
-    }, [selectedCubeId, pageSize, currentPage, customers]); // Added customers to deps for conditional fetch
+    }, [selectedCubeId, currentPage, customers.length]); // Les dépendances restent les mêmes et sont correctes
 
     useEffect(() => {
-        const pageToFetch = parseInt(searchParams.get('pageNumber')) || 1;
-        if (pageToFetch !== currentPage) { // Sync currentPage state with URL on first load or back/forward
-            setCurrentPage(pageToFetch);
-        }
-        fetchCubesetsAndCustomers(pageToFetch);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedCubeId, searchParams.get('pageNumber'), pageSize]); // Main trigger
+        fetchCubesetsAndCustomers();
+    }, [fetchCubesetsAndCustomers]);
 
+    const handleCustomerFilterChange = (e) => {
+        const newCubeId = e.target.value;
+
+        // <<< LOG 1 : VERIFIER L'INTERACTION DE L'UTILISATEUR >>>
+        console.log(`%c[Log 1] handleCustomerFilterChange: User selected newCubeId: '${newCubeId}'`, 'color: purple; font-weight: bold;');
+
+        setSelectedCubeId(newCubeId);
+        setCurrentPage(1);
+
+        const params = { pageNumber: '1' };
+        if (newCubeId) {
+            params.cubeIdPk = newCubeId;
+        }
+        setSearchParams(params);
+    };
+
+    // ... (les autres fonctions handlePageChange, handleDeleteCubeset, etc. ne changent pas)
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            const params = { pageNumber: String(newPage) };
+            if (selectedCubeId) {
+                params.cubeIdPk = selectedCubeId;
+            }
+            setSearchParams(params);
+        }
+    };
 
     const handleDeleteCubeset = async (id) => {
         if (!window.confirm(`Delete cubeset ID: ${id}?`)) return;
@@ -77,51 +105,37 @@ function CubesetListPage() {
             if (cubesets.length === 1 && currentPage > 1) {
                 handlePageChange(currentPage - 1);
             } else {
-                fetchCubesetsAndCustomers(currentPage); // Refresh current page
+                fetchCubesetsAndCustomers();
             }
         } catch (err) {
             alert(`Error deleting cubeset: ${err.response?.data?.message || err.message}`);
         }
     };
 
-    const handleCustomerFilterChange = (e) => {
-        const newCubeId = e.target.value;
-        setSelectedCubeId(newCubeId);
-        setCurrentPage(1); // Reset to first page
-        const params = { pageNumber: '1' }; // pageSize is fixed for now
-        if (newCubeId) params.cubeIdPk = newCubeId;
-        setSearchParams(params);
-    };
-
     const handleNavigateToAdd = () => {
         navigate(selectedCubeId ? `/cubesets/add?cubeIdPk=${selectedCubeId}` : '/cubesets/add');
     };
 
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && (newPage <= totalPages || totalPages === 0) ) {
-            setCurrentPage(newPage);
-            const params = { pageNumber: String(newPage) };
-            if (selectedCubeId) params.cubeIdPk = selectedCubeId;
-            // params.pageSize = String(pageSize); // if pageSize can change
-            setSearchParams(params);
-        }
-    };
-
 
     return (
-        <div>
+        <div className="container mt-4">
             <h1>Cubesets Management</h1>
-            <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <div>
-                    <label htmlFor="customerFilterCubesetPage" style={{ marginRight: '10px' }}>Filter by Customer:</label>
-                    <select id="customerFilterCubesetPage" value={selectedCubeId} onChange={handleCustomerFilterChange}>
-                        <option value="">All Customers</option>
-                        {customers.map(cust => <option key={cust.cube_id_pk} value={cust.cube_id_pk}>{cust.cube_name} ({cust.cube_id_pk})</option>)}
-                    </select>
+            <div className="card card-body mb-3">
+                <div className="row g-3 align-items-center">
+                    <div className="col-md-8">
+                        <label htmlFor="customerFilterCubesetPage" className="form-label">Filter by Customer:</label>
+                        <select id="customerFilterCubesetPage" value={selectedCubeId} onChange={handleCustomerFilterChange} className="form-select">
+                            <option value="">All Customers</option>
+                            {customers.map(cust => <option key={cust.cube_id_pk} value={cust.cube_id_pk}>{cust.cube_name} ({cust.cube_id_pk})</option>)}
+                        </select>
+                    </div>
+                    <div className="col-md-4">
+                        <label className="form-label"> </label>
+                        <button className="btn btn-primary w-100" onClick={handleNavigateToAdd}>
+                            Add New Cubeset
+                        </button>
+                    </div>
                 </div>
-                <button className="primary" onClick={handleNavigateToAdd}>
-                    Add New Cubeset
-                </button>
             </div>
 
             <CubesetList
@@ -130,13 +144,17 @@ function CubesetListPage() {
                 onDelete={handleDeleteCubeset}
                 loading={loading}
                 error={error}
-
             />
-            {totalPages > 0 && (
-                <div className="pagination-controls" style={{ marginTop: '20px', textAlign: 'center' }}>
-                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>Prev</button>
-                    <span> Page {currentPage} of {totalPages} </span>
-                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0}>Next</button>
+
+            {totalPages > 1 && (
+                <div className="pagination-controls mt-3 d-flex justify-content-center">
+                    <button className="btn btn-outline-secondary" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                        « Prev
+                    </button>
+                    <span className="mx-3 my-auto"> Page {currentPage} of {totalPages} </span>
+                    <button className="btn btn-outline-secondary" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages}>
+                        Next »
+                    </button>
                 </div>
             )}
         </div>
