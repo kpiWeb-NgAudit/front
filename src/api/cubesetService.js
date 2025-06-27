@@ -1,7 +1,9 @@
 // src/api/cubesetService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/cubesets'; // Your CubesetsController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/cubesets`; // Your CubesetsController base URL
 
 export const getAllCubesets = async (params = {}) => {
     // params can include { cubeIdPk: 'customerXYZ', pageNumber: 1, pageSize: 10 }

@@ -1,7 +1,9 @@
 // src/api/factColumnService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/factcolumns';
+
+const API_BASE_URL = `${BASE_URL}/api/factcolumns`;
 
 export const getAllFactColumns = async (params = {}) => {
     // params: { factIdPk: 1, pageNumber: 1, pageSize: 10 }

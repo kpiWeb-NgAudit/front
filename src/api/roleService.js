@@ -1,7 +1,9 @@
 // src/api/roleService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/roles'; // Your RolesController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/roles`;
 
 export const getAllRoles = async (params = {}) => {
     // params can include { cubeIdPk: 'customerXYZ', pageNumber: 1, pageSize: 10 }

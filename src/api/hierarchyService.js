@@ -1,7 +1,9 @@
 // src/api/hierarchyService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/hierarchies';
+
+const API_BASE_URL = `${BASE_URL}/api/hierarchies`;
 
 export const getAllHierarchies = async (params = {}) => {
     // params could be { dimIdPk: 123, pageNumber: 1, pageSize: 10 }

@@ -1,8 +1,10 @@
 // src/api/perspectiveFactAssociationService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
+
 
 // Matches your PerspectiveFactAssociationsController route
-const API_BASE_URL = 'http://localhost:5208/api/perspective-fact-associations';
+const API_BASE_URL = `${BASE_URL}/api/perspective-fact-associations`;
 
 // Get all fact associations for a specific perspective
 export const getFactAssociationsByPerspectiveId = async (perspIdPk) => {

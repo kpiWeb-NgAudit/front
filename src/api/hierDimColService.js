@@ -1,8 +1,10 @@
 // src/api/hierDimColService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
+
 
 // Assuming your controller for hier_dimcol is at /api/hierdimcols
-const API_BASE_URL = 'http://localhost:5208/api/hierdimcols';
+const API_BASE_URL = `${BASE_URL}/api/hierdimcols`;
 
 // Get all column associations for a specific hierarchy
 export const getHierDimColsByHierarchyId = async (hierIdPk) => {

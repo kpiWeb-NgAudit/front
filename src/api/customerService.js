@@ -1,7 +1,9 @@
 // src/api/customerService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/customer'; // Or your full backend URL / proxied path
+
+const API_BASE_URL = `${BASE_URL}/api/customer`;
 
 export const getAllCustomers = async (params = {}) => { // Added params for consistency
     console.log("customerService: getAllCustomers called with params:", params);

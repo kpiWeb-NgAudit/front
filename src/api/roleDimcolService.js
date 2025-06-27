@@ -1,8 +1,10 @@
 // Créez ce nouveau fichier : src/api/roleDimcolService.js
 
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_URL = 'http://localhost:5208/api/roledimcols';
+
+const API_URL = `${BASE_URL}/api/roledimcols`;
 
 // Pour la page de liste globale (GET /)
 const getAllPermissions = (params) => {

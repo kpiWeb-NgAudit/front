@@ -1,7 +1,9 @@
 // src/api/userService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/users'; // Your UsersController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/users`;
 
 export const getAllUsers = async (params = {}) => {
     console.log("userService: getAllUsers called with params:", params);

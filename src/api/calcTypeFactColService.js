@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/calctype-factcols';
+const API_BASE_URL = `${BASE_URL}/api/calctype-factcols`;
 
 // Renamed and generalized for fetching lists with optional filters
 export const getAllCalcTypeFactColAssociations = async (params = {}) => {

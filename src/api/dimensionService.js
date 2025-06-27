@@ -1,7 +1,9 @@
 // src/api/dimensionService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/dimensions'; // Adjust if your port/base changes
+
+const API_BASE_URL = `${BASE_URL}/api/dimensions`; // Adjust if your port/base changes
 
 // Fetch all dimensions with optional query parameters
 export const getAllDimensions = async (params = {}) => {

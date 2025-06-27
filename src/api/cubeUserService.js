@@ -1,7 +1,9 @@
 // src/api/cubeUserService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/cubeusers'; // Your CubeUsersController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/cubeusers`; // Your CubeUsersController base URL
 
 // Get all user associations, typically filtered by cubeIdPk or userIdPk
 export const getCubeUserAssociations = async (params = {}) => {

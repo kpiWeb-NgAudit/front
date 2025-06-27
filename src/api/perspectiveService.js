@@ -1,7 +1,9 @@
 // src/api/perspectiveService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/perspectives';
+
+const API_BASE_URL = `${BASE_URL}/api/perspectives`;
 
 export const getAllPerspectives = async (params = {}) => {
     // params: { cubeIdPk: 'customerXYZ', pageNumber: 1, pageSize: 10 }

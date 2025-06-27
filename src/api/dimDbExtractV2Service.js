@@ -1,7 +1,9 @@
 // src/api/dimDbExtractV2Service.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/dimdbextractsv2';
+
+const API_BASE_URL = `${BASE_URL}/api/dimdbextractsv2`;
 
 // Get all extracts, typically filtered by dimIdPk
 export const getAllDimDbExtractsV2 = async (params = {}) => {

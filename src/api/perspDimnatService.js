@@ -1,7 +1,9 @@
 // src/api/perspDimnatService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/perspdimnats'; // Correspond à votre contrôleur
+
+const API_BASE_URL = `${BASE_URL}/api/perspdimnats`;
 
 // Get all dimension associations for a specific perspective
 export const getDimensionAssociationsByPerspectiveId = async (perspectiveId) => {

@@ -1,8 +1,10 @@
 // Créez ce nouveau fichier : src/api/factDbExtractV2Service.js
 
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_URL = 'http://localhost:5208/api/factdbextractsV2';
+
+const API_URL = `${BASE_URL}/api/factdbextractsV2`;
 
 // Pour la page de liste globale (GET /)
 const getAllExtracts = (params) => {

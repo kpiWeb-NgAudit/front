@@ -1,7 +1,9 @@
 // src/api/rdlTypeService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/rdltypes';
+
+const API_BASE_URL = `${BASE_URL}/api/rdltypes`;
 
 export const getAllRdlTypes = async (params = {}) => { // Added params for potential filtering
     // params could be { rdlGroupIdPk: 'GENERAL' }

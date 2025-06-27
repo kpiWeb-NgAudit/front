@@ -1,7 +1,9 @@
 // src/api/rdlListService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/rdllists';
+
+const API_BASE_URL = `${BASE_URL}/api/rdllists`;
 
 export const getAllRdlLists = async (params = {}) => {
     // params: { cubeIdPk, themeIdPk, rdlTypeIdPk, pageNumber, pageSize }

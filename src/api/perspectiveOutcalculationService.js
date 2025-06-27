@@ -1,7 +1,9 @@
 // src/api/perspectiveOutcalculationService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/perspective-outcalculations';
+
+const API_BASE_URL = `${BASE_URL}/api/perspective-outcalculations`;
 
 export const getAllPerspectiveOutcalculations = async (params = {}) => {
     // params: { perspIdPk: 1, outcalculation: 'XYZ', pageNumber, pageSize }

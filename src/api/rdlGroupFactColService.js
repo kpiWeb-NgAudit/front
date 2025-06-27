@@ -1,8 +1,10 @@
 // src/api/rdlGroupFactColService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
+
 
 // Matches your RdlGroupFactColsController route
-const API_BASE_URL = 'http://localhost:5208/api/rdlgroup-factcols';
+const API_BASE_URL = `${BASE_URL}/api/rdlgroup-factcols`;
 
 export const getAllRdlGroupFactColAssociations = async (params = {}) => {
     // params: { rdlGroupIdPk: 'GROUP1', factcolIdPk: 123, pageNumber, pageSize }

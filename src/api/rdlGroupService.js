@@ -1,7 +1,9 @@
 // src/api/rdlGroupService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/rdlgroups';
+
+const API_BASE_URL = `${BASE_URL}/api/rdlgroups`;
 
 export const getAllRdlGroups = async () => {
     console.log("rdlGroupService: getAllRdlGroups called");

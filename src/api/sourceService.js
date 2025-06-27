@@ -1,7 +1,9 @@
 // src/api/sourceService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/sources'; // Your SourcesController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/sources`;
 
 export const getAllSources = async (params = {}) => {
     // params: { cubeIdPk: 'customerXYZ', pageNumber: 1, pageSize: 10 }

@@ -1,7 +1,9 @@
 // src/api/sourceFactService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_URL = 'http://localhost:5208/api/sourcefacts'; // Assurez-vous que l'URL de base est correcte
+
+const API_URL = `${BASE_URL}/api/sourcefacts`;
 
 // Récupérer toutes les associations pour une source donnée
 const getSourceFactsBySource = (sourceId) => {

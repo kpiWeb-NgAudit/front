@@ -1,7 +1,9 @@
 // src/api/calcTypeService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/calctypes'; // Your CalcTypesController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/calctypes`; // Your CalcTypesController base URL
 
 export const getAllCalcTypes = async () => {
     console.log("calcTypeService: getAllCalcTypes called");

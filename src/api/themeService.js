@@ -1,7 +1,9 @@
 // src/api/themeService.js
 import axios from 'axios';
+import { BASE_URL } from '../config/apiConfig';
 
-const API_BASE_URL = 'http://localhost:5208/api/themes'; // Your ThemesController base URL
+
+const API_BASE_URL = `${BASE_URL}/api/themes`;
 
 export const getAllThemes = async () => {
     // No pagination needed if the list is small and fixed
