@@ -7,20 +7,35 @@ import {
     getDropdownOptions
 } from '../constants/cubesetEnums';
 import { getAllCustomers } from '../api/customerService';
+import { getNextPresOrder } from '../api/cubesetService';
+
 
 // Helper for consistent key transformation from snake_case (backend) to PascalCase (form state)
 const snakeToPascal = (str) => {
     if (!str) return str;
+
+    // Gère les cas spéciaux comme _pk à la fin
     if (str.toLowerCase().endsWith("_pk")) {
         const prefix = str.substring(0, str.length - 3);
-        return prefix.split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join('') + 'Pk';
+        // On ne met en majuscule que le premier mot pour les PKs
+        const parts = prefix.split('_');
+        return parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase() +
+            parts.slice(1).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join('') + 'Pk';
     }
+
+    // Gère les autres cas
     return str.split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .map(word => {
+            // Si le mot est un acronyme connu (comme AS), on le met en majuscules.
+            if (word.toLowerCase() === 'as') {
+                return 'AS';
+            }
+            // Sinon, on met juste la première lettre en majuscule.
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
         .join('');
 };
+
 
 const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isEditMode = false }) => {
     const [customers, setCustomers] = useState([]);
@@ -34,7 +49,7 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
             CubesetIdPk: '',
             CubesetName: '',
             CubesetCubeName: '',
-            CubesetAsInstruction: '',
+            CubesetAsinstruction: '',
             CubesetHidden: CUBESET_HIDDEN_OPTIONS[0] || '',
             CubesetDynamic: CUBESET_DYNAMIC_OPTIONS[0] || '',
             CubesetRdlShowFilter: CUBESET_RDLSHOWFILTER_OPTIONS[0] || '',
@@ -78,6 +93,26 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
         return baseState;
     });
     const [errors, setErrors] = useState({});
+
+    // <<< 2. NOUVELLE FONCTION POUR GÉRER LE CHANGEMENT DE CLIENT >>>
+    const handleCustomerChange = async (selectedCubeId) => {
+        // Mettre à jour immédiatement la valeur du client dans le formulaire
+        setFormData(prev => ({ ...prev, CubeIdPk: selectedCubeId, CubesetPresOrder: 0 }));
+
+        // Si un client est sélectionné (et non l'option vide "Select Customer")
+        if (selectedCubeId) {
+            try {
+                // Appeler le nouvel endpoint pour obtenir le prochain numéro d'ordre
+                const nextOrder = await getNextPresOrder(selectedCubeId);
+                // Mettre à jour le champ "Presentation Order" avec la valeur suggérée
+                setFormData(prev => ({ ...prev, CubesetPresOrder: nextOrder }));
+            } catch (error) {
+                console.warn("Could not fetch next presentation order. User must enter it manually.");
+                // Optionnel: informer l'utilisateur qu'il doit saisir manuellement
+                setErrors(prev => ({...prev, CubesetPresOrder: "Could not fetch next order. Please enter manually."}));
+            }
+        }
+    };
 
     // Effect to fetch customers for dropdown (only if adding globally)
     useEffect(() => {
@@ -168,7 +203,7 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
         if (!formData.CubesetCubeName.trim()) newErrors.CubesetCubeName = 'Internal Cube Name is required.';
         else if (formData.CubesetCubeName.length > 30) newErrors.CubesetCubeName = 'Internal Cube Name max 30 chars.';
 
-        if (!formData.CubesetAsInstruction.trim()) newErrors.CubesetAsInstruction = 'AS Instruction is required.';
+        if (!formData.CubesetAsinstruction.trim()) newErrors.CubesetAsinstruction = 'AS Instruction is required.';
 
         if (!formData.CubesetHidden) newErrors.CubesetHidden = 'Hidden option is required.';
         if (!formData.CubesetDynamic) newErrors.CubesetDynamic = 'Dynamic option is required.';
@@ -215,7 +250,7 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
         const submissionData = {
             CubesetName: formData.CubesetName.trim(),
             CubesetCubeName: formData.CubesetCubeName.trim(),
-            CubesetAsInstruction: formData.CubesetAsInstruction.trim(),
+            CubesetAsinstruction: formData.CubesetAsinstruction.trim(),
             CubesetHidden: formData.CubesetHidden,
             CubesetDynamic: formData.CubesetDynamic,
             CubesetRdlShowFilter: formData.CubesetRdlShowFilter,
@@ -294,7 +329,7 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
                     <div className="form-group">
                         <label htmlFor="CubeIdPkCubesetForm">Parent Customer (*)</label>
                         {loadingCustomers ? <p>Loading customers...</p> : (
-                            <select id="CubeIdPkCubesetForm" name="CubeIdPk" value={formData.CubeIdPk} onChange={handleChange} required>
+                            <select id="CubeIdPkCubesetForm" name="CubeIdPk" value={formData.CubeIdPk} onChange={(e) => handleCustomerChange(e.target.value)} required>
                                 <option value="">--- Select Customer ---</option>
                                 {customers.map(c => <option key={c.cube_id_pk} value={c.cube_id_pk}>{c.cube_name} ({c.cube_id_pk})</option>)}
                             </select>
@@ -344,13 +379,26 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
             <fieldset>
                 <legend>Instructions & Comments</legend>
                 <div className="form-group">
-                    <label htmlFor="CubesetAsInstructionForm">AS Instruction (MDX/XMLA) (*)</label>
-                    <textarea id="CubesetAsInstructionForm" name="CubesetAsInstruction" value={formData.CubesetAsInstruction} onChange={handleChange} required rows="5" />
-                    {errors.CubesetAsInstruction && <p className="error-message">{errors.CubesetAsInstruction}</p>}
+                    <label htmlFor="CubesetAsinstructionForm">AS Instruction (MDX/XMLA) (*)</label>
+                    <textarea
+                        id="CubesetAsinstructionForm"
+                        name="CubesetAsinstruction"
+                        value={formData.CubesetAsinstruction} // <<< CORRECTION APPLIQUÉE ICI
+                        onChange={handleChange}
+                        required
+                        rows="5"
+                    />
+                    {errors.CubesetAsinstruction && <p className="error-message">{errors.CubesetAsinstruction}</p>}
                 </div>
                 <div className="form-group">
                     <label htmlFor="CubesetCommentsForm">Comments (Optional)</label>
-                    <textarea id="CubesetCommentsForm" name="CubesetComments" value={formData.CubesetComments} onChange={handleChange} rows="3" />
+                    <textarea
+                        id="CubesetCommentsForm"
+                        name="CubesetComments"
+                        value={formData.CubesetComments}
+                        onChange={handleChange}
+                        rows="3"
+                    />
                     {errors.CubesetComments && <p className="error-message">{errors.CubesetComments}</p>}
                 </div>
             </fieldset>

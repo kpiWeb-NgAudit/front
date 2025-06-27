@@ -18,6 +18,16 @@ export const getAllCubesets = async (params = {}) => {
     }
 };
 
+export const getNextPresOrder = async (cubeIdPk) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/next-order/${cubeIdPk}`);
+        return response.data; // Devrait retourner un nombre, ex: 5
+    } catch (error) {
+        console.error(`cubesetService: Error fetching next presentation order for ${cubeIdPk}:`, error.response?.data || error.message);
+        throw error; // Laissez le composant gérer l'erreur
+    }
+};
+
 export const getCubesetById = async (id) => {
     try {
         const response = await axios.get(`${API_BASE_URL}/${id}`);
