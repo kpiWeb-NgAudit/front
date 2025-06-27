@@ -62,6 +62,8 @@ import OlapQueryLogPage from "./pages/OlapQueryLogPage.jsx";
 import PerspDimnatListPage from "./pages/PerspDimnatListPage.jsx";
 import FactDbExtractV2ListPage from "./pages/FactDbExtractV2ListPage.jsx";
 import RoleDimcolListPage from "./pages/RoleDimcolListPage.jsx";
+import DimColumnListPage from "./pages/DimColumnListPage.jsx";
+import EditDimColumnPage from "./pages/EditDimColumnPage.jsx";
 
 
 
@@ -87,6 +89,10 @@ function App() {
                     <Route path="/dimensions" element={<DimensionListPage/>}/>
                     <Route path="/dimensions/add" element={<AddDimensionPage/>}/>
                     <Route path="/dimensions/edit/:id" element={<EditDimensionPage/>}/>
+
+
+                    <Route path="/dimcolumns" element={<DimColumnListPage />} />
+                    <Route path="/dimcolumns/edit/:id" element={<EditDimColumnPage />} />
 
 
                     <Route path="/hierarchies" element={<HierarchyListPage/>}/>

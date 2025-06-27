@@ -13,8 +13,8 @@ function HomePage() {
 
             <nav className="home-navigation">
                 <Link to="/customers" className="nav-card">
-                    <div className="nav-card-icon">🏢</div>
-                    <h2>Customers Management</h2>
+                    <div className="nav-card-icon">📦</div>
+                    <h2>Customers (Cubes) Management</h2>
                     <p>Manage customer profiles and configurations.</p>
                 </Link>
 
@@ -22,6 +22,12 @@ function HomePage() {
                     <div className="nav-card-icon">📏</div>
                     <h2>Dimensions Management</h2>
                     <p>Manage dimension attributes and configurations.</p>
+                </Link>
+
+                <Link to="/dimcolumns" className="nav-card">
+                    <div className="nav-card-icon">၊၊||၊</div>
+                    <h2>Dimension Columns</h2>
+                    <p>View and manage all dimension columns across all dimensions.</p>
                 </Link>
 
                 <Link to="/facts" className="nav-card">

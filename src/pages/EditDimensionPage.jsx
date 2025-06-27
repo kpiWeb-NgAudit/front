@@ -105,11 +105,11 @@ function EditDimensionPage() {
             />
 
             <hr style={{ margin: '30px 0' }} />
-            <h3>Dimension Columns</h3>
+            {/*<h3>Dimension Columns</h3>*/}
             {!isNaN(numericId) && <DimensionColumnManager dimensionId={numericId} />}
 
             <hr style={{ margin: '30px 0' }} />
-            <h3>Data Extract Definitions for this Dimension</h3>
+            {/*<h3>Data Extract Definitions for this Dimension</h3>*/}
             {!isNaN(numericId) && parentCustomerId && (
                 <DimensionExtractManager
                     dimensionId={numericId}
@@ -121,11 +121,11 @@ function EditDimensionPage() {
             {parentCustomerId && ( // Only render if we have a customer ID
                 <>
                     <hr style={{ margin: '30px 0', border: 0, borderTop: '2px dashed #bbb' }} />
-                    <h3>Cubesets for Customer: {parentCustomerId}</h3>
+                    {/*<h3>Cubesets for Customer: {parentCustomerId}</h3>*/}
                     <CustomerCubesetManager customerId={parentCustomerId} />
 
                     <hr style={{ margin: '30px 0', border: 0, borderTop: '2px dashed #bbb' }} />
-                    <h3>Exploit Instructions for Customer: {parentCustomerId}</h3>
+                    {/*<h3>Exploit Instructions for Customer: {parentCustomerId}</h3>*/}
                     <CustomerExploitInstructionManager customerId={parentCustomerId} />
                 </>
             )}

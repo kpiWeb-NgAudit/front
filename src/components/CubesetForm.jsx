@@ -329,7 +329,7 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
                     <div className="form-group">
                         <label htmlFor="CubeIdPkCubesetForm">Parent Customer (*)</label>
                         {loadingCustomers ? <p>Loading customers...</p> : (
-                            <select id="CubeIdPkCubesetForm" name="CubeIdPk" value={formData.CubeIdPk} onChange={(e) => handleCustomerChange(e.target.value)} required>
+                            <select id="CubeIdPkCubesetForm" name="CubeIdPk" value={formData.CubeIdPk} onChange={handleChange} required>
                                 <option value="">--- Select Customer ---</option>
                                 {customers.map(c => <option key={c.cube_id_pk} value={c.cube_id_pk}>{c.cube_name} ({c.cube_id_pk})</option>)}
                             </select>

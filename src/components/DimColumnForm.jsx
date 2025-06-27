@@ -1,4 +1,3 @@
-// src/components/DimColumnForm.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     DIMCOL_USE_OPTIONS, DIMCOL_PURGEWHENVIRT_OPTIONS, DIMCOL_TYPE_OPTIONS,
@@ -7,94 +6,75 @@ import {
     getDropdownOptions, getOptionalDropdownOptions
 } from '../constants/dimColumnEnums';
 
-// Helper for consistent key transformation
-const snakeToPascal = (str) => {
-    if (!str) return str;
-    if (str.toLowerCase().endsWith("_pk")) {
-        const prefix = str.substring(0, str.length - 3);
-        return prefix.split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join('') + 'Pk';
-    }
-    return str.split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join('');
-};
-
+// La fonction snakeToPascal n'est plus nécessaire pour le peuplement du formulaire
+// const snakeToPascal = ...
 
 const DimColumnForm = ({ onSubmit, onCancel, initialData = {}, parentDimensionId, isEditMode = false }) => {
+
+    // L'état initial du formulaire est correct et ne change pas.
     const getInitialFormState = useCallback(() => ({
-        DimcolIdPk: '', // Client provides for new
+        DimcolIdPk: '',
         DimcolCname: '',
         DimcolUse: DIMCOL_USE_OPTIONS[0] || '',
-        DimcolPurgewhenvirt: '', // Optional
+        DimcolPurgewhenvirt: '',
         DimcolType: DIMCOL_TYPE_OPTIONS[0] || '',
         DimcolShortCubeName: '',
         DimcolShortPresName: '',
         DimcolWorkOrder: 0,
-        DimcolCubeType: '', // Should this come from parent dimension? Or be set here?
+        DimcolCubeType: '',
         DimcolCubeProc: DIMCOL_CUBEPROC_OPTIONS[0] || '',
-        DimcolCubeSort: '', // Nullable int
-        DimcolCubeFormula: '', // Nullable string
+        DimcolCubeSort: '',
+        DimcolCubeFormula: '',
         DimcolCubeVisible: DIMCOL_CUBEVISIBLE_OPTIONS[0] || '',
         DimcolRdlShowFilter: DIMCOL_RDLSHOWFILTER_OPTIONS[0] || '',
         DimcolConstraintType: DIMCOL_CONSTRAINTTYPE_OPTIONS[0] || '',
         DimcolDrillThrough: DIMCOL_DRILLTHROUGH_OPTIONS[0] || '',
-        DimcolAttributeRelation: '', // Nullable int
-        DimcolPropertyName: '', // Nullable int
-        DimcolPropertyValue: '', // Nullable int
-        DimcolDisplayFolder: '', // Nullable string
-        DimcolDefaultMember: '', // Nullable string
+        DimcolAttributeRelation: '',
+        DimcolPropertyName: '',
+        DimcolPropertyValue: '',
+        DimcolDisplayFolder: '',
+        DimcolDefaultMember: '',
         DimcolIndexDataMart: DIMCOL_INDEXDATAMART_OPTIONS[0] || '',
-        DimcolComments: '', // Nullable string
-        DimIdPk: parentDimensionId || '', // FK to Parent Dimension, pre-filled
-        DimcolTimestamp: null, // For edit
+        DimcolComments: '',
+        DimIdPk: parentDimensionId || '',
+        DimcolTimestamp: null,
     }), [parentDimensionId]);
 
     const [formData, setFormData] = useState(getInitialFormState());
     const [errors, setErrors] = useState({});
 
+    // <<< CORRECTION PRINCIPALE ICI : SIMPLIFICATION DU useEffect DE SYNCHRONISATION >>>
     useEffect(() => {
-        let populatedState = { ...getInitialFormState() }; // Start with defaults including parentDimensionId
+        let populatedState = getInitialFormState(); // On commence avec un état propre
 
         if (isEditMode && initialData) {
-            for (const backendKey in initialData) {
-                if (initialData.hasOwnProperty(backendKey)) {
-                    const formKey = snakeToPascal(backendKey);
-                    if (populatedState.hasOwnProperty(formKey)) {
-                        const value = initialData[backendKey];
-                        if (value === null || typeof value === 'undefined') {
-                            populatedState[formKey] = '';
-                        } else if (typeof value === 'number') {
-                            populatedState[formKey] = String(value);
-                        } else if (formKey === 'DimcolTimestamp' && value) {
-                            populatedState[formKey] = value;
-                        }
-                        else {
-                            populatedState[formKey] = value;
-                        }
-                    }
+            console.log("Populating DimColumnForm with initialData:", initialData);
+
+            // On fusionne directement les données reçues (qui sont déjà en PascalCase)
+            // avec notre état de base. C'est beaucoup plus simple et fiable.
+            populatedState = { ...populatedState, ...initialData };
+
+            // On parcourt l'objet fusionné pour normaliser les types pour les inputs.
+            for (const key in populatedState) {
+                const value = populatedState[key];
+                if (typeof value === 'number') {
+                    // Convertir les nombres en chaînes pour les champs de formulaire
+                    populatedState[key] = String(value);
+                } else if (value === null) {
+                    // Convertir les null en chaînes vides
+                    populatedState[key] = '';
                 }
             }
-            // Ensure PK is set correctly from initialData for edit mode
-            if (initialData.dimcol_id_pk) {
-                populatedState.DimcolIdPk = String(initialData.dimcol_id_pk);
-            }
-            // Parent DimIdPk should come from initialData if it's there, otherwise from prop
-            if (initialData.dim_id_pk) {
-                populatedState.DimIdPk = String(initialData.dim_id_pk);
-            }
 
-        } else if (!isEditMode) {
-            // For new, DimIdPk is already set by getInitialFormState via parentDimensionId
-            // If parentDimensionId was passed to initialData for some reason, it would also work.
-            if (initialData && initialData.DimIdPk) { // For pre-fill on create if needed
-                populatedState.DimIdPk = initialData.DimIdPk;
+            // Le timestamp est une exception, on veut le garder comme un byte array.
+            if (initialData.DimcolTimestamp) {
+                populatedState.DimcolTimestamp = initialData.DimcolTimestamp;
             }
         }
+
         setFormData(populatedState);
-        setErrors({}); // Clear errors when form is (re)initialized
-    }, [initialData, isEditMode, getInitialFormState, parentDimensionId]);
+        setErrors({}); // On réinitialise les erreurs à chaque changement
+    }, [initialData, isEditMode, getInitialFormState]);
 
 
     const validate = () => {
@@ -177,7 +157,7 @@ const DimColumnForm = ({ onSubmit, onCancel, initialData = {}, parentDimensionId
             if (error.response?.data?.errors) {
                 const backendFieldErrors = {};
                 for (const key in error.response.data.errors) {
-                    backendFieldErrors[snakeToPascal(key)] = error.response.data.errors[key].join(', ');
+                    backendFieldErrors[(key)] = error.response.data.errors[key].join(', ');
                 }
                 setErrors(prev => ({ ...prev, ...backendFieldErrors }));
             }
