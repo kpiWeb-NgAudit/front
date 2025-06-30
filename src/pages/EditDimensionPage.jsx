@@ -30,6 +30,7 @@ function EditDimensionPage() {
         setError(null);
         try {
             const data = await getDimensionById(numericId);
+            console.log('Fetched dimension data:', data); // <-- Debug log for API response
             if (data) { // Check if data was actually returned
                 setDimension(data);
             } else {

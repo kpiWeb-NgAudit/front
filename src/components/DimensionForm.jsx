@@ -8,9 +8,20 @@ import {
     getDropdownOptions, getOptionalDropdownOptions
 } from '../constants/dimensionEnums';
 import { getAllCustomers } from '../api/customerService'; // To fetch customers for dropdown
-import { snakeToPascal } from '../utils/transformKeys';
 
+const specialCaseMap = {
+    dim_shortcubename: 'DimShortCubeName',
+    dim_shortpresname: 'DimShortPresName',
+    // Add more special cases if needed
+};
 
+const snakeToPascal = (str) => {
+    if (!str) return str;
+    if (specialCaseMap[str]) return specialCaseMap[str];
+    return str.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('');
+};
 
 const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => {
     const navigate = useNavigate();
@@ -51,22 +62,6 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
     const [errors, setErrors] = useState({});
     const [loadingCustomers, setLoadingCustomers] = useState(true);
 
-    const snakeToPascal = (str) => {
-        if (!str) return str;
-        // Handle cases like dim_id_pk -> DimIdPk, cube_id_pk -> CubeIdPk
-        if (str.toLowerCase().endsWith("_pk")) {
-            const prefix = str.substring(0, str.length - 3);
-            return prefix.split('_')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join('') + 'Pk';
-        }
-        return str.split('_')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join('');
-    };
-
-
-
     useEffect(() => {
         const fetchCustomersForDropdown = async () => {
             try {
@@ -85,11 +80,13 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
 
     useEffect(() => {
         if (isEditMode && initialData) {
+            console.log('DimensionForm initialData:', initialData); // Debug log
             const populatedData = { ...getInitialFormState() };
 
             for (const keyInDto in initialData) {
                 if (initialData.hasOwnProperty(keyInDto)) {
                     const formKey = snakeToPascal(keyInDto); // use the utility function
+                    console.log(`Mapping backend key: ${keyInDto} → ${formKey}, value:`, initialData[keyInDto]); // Debug log
 
                     if (populatedData.hasOwnProperty(formKey)) {
                         const value = initialData[keyInDto];
@@ -109,6 +106,7 @@ const DimensionForm = ({ onSubmit, initialData = null, isEditMode = false }) => 
                 }
             }
 
+            console.log('DimensionForm populatedData:', populatedData); // Debug log
             setFormData(populatedData);
         } else if (!isEditMode) {
             setFormData(getInitialFormState());
