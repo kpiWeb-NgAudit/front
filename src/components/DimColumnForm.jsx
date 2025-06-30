@@ -6,8 +6,19 @@ import {
     getDropdownOptions, getOptionalDropdownOptions
 } from '../constants/dimColumnEnums';
 
-// La fonction snakeToPascal n'est plus nécessaire pour le peuplement du formulaire
-// const snakeToPascal = ...
+const specialCaseMap = {
+    dimcol_shortcubename: 'DimcolShortCubeName',
+    dimcol_shortpresname: 'DimcolShortPresName',
+    // Add more special cases if needed
+};
+
+const snakeToPascal = (str) => {
+    if (!str) return str;
+    if (specialCaseMap[str]) return specialCaseMap[str];
+    return str.split('_')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('');
+};
 
 const DimColumnForm = ({ onSubmit, onCancel, initialData = {}, parentDimensionId, isEditMode = false }) => {
 
@@ -50,9 +61,13 @@ const DimColumnForm = ({ onSubmit, onCancel, initialData = {}, parentDimensionId
         if (isEditMode && initialData) {
             console.log("Populating DimColumnForm with initialData:", initialData);
 
-            // On fusionne directement les données reçues (qui sont déjà en PascalCase)
-            // avec notre état de base. C'est beaucoup plus simple et fiable.
-            populatedState = { ...populatedState, ...initialData };
+            // Map backend snake_case keys to PascalCase for the form
+            for (const key in initialData) {
+                if (initialData.hasOwnProperty(key)) {
+                    const formKey = snakeToPascal(key);
+                    populatedState[formKey] = initialData[key];
+                }
+            }
 
             // On parcourt l'objet fusionné pour normaliser les types pour les inputs.
             for (const key in populatedState) {

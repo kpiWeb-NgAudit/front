@@ -39,8 +39,8 @@ function EditRolePage() {
         try {
             const updatedRole = await updateRole(numericId, roleData);
             alert(`Role "${updatedRole.role_name || updatedRole.role_id_pk}" updated.`);
-            // Navigate back to the list, potentially with customer filter
-            navigate(roleData.CubeIdPk ? `/roles?cubeIdPk=${roleData.CubeIdPk}` : '/roles');
+            // Always navigate back to the roles list without any filter
+            navigate('/roles');
         } catch (error) {
             alert(`Error updating role: ${error.response?.data?.message || error.message}`);
             throw error;

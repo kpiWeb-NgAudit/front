@@ -7,9 +7,14 @@ import {
 } from '../constants/hierarchyEnums';
 import { getAllDimensions } from '../api/dimensionService'; // To fetch dimensions for dropdown
 
-// Helper function (can be in a utils file)
+const specialCaseMap = {
+    hier_cubename: 'HierCubeName',
+    // Add more special cases if needed
+};
+
 const snakeToPascal = (str) => {
     if (!str) return str;
+    if (specialCaseMap[str]) return specialCaseMap[str];
     if (str.toLowerCase().endsWith("_pk")) {
         const prefix = str.substring(0, str.length - 3);
         return prefix.split('_')

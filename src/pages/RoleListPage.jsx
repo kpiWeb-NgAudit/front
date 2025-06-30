@@ -19,19 +19,23 @@ function RoleListPage() {
     const [pageSize] = useState(10); // Or make configurable
     const [totalPages, setTotalPages] = useState(0);
 
-    const fetchRolesAndCustomers = useCallback(async (page = currentPage) => {
+    const fetchRolesAndCustomers = useCallback(async (page = currentPage, cubeId = selectedCubeId) => {
         setLoading(true);
         setError(null);
         try {
             const paramsForRoles = { pageNumber: page, pageSize };
-            if (selectedCubeId) {
-                paramsForRoles.cubeIdPk = selectedCubeId;
+            if (cubeId) {
+                paramsForRoles.cubeIdPk = cubeId;
             }
+            console.log('DEBUG: Fetching roles with params:', paramsForRoles); // Debug log
 
             const [rolesResponse, custData] = await Promise.all([
                 getAllRoles(paramsForRoles),
                 getAllCustomers({ pageSize: 1000 }) // Fetch customers for filter
             ]);
+
+            console.log('DEBUG: Roles response data:', rolesResponse.data); // Debug log
+            console.log('DEBUG: Customers for filter:', custData.data || custData); // Debug log
 
             setRoles(rolesResponse.data || []);
             setCustomers(custData.data || []); // Assuming getAllCustomers returns {data, headers}
@@ -46,17 +50,18 @@ function RoleListPage() {
             setCurrentPage(page);
 
         } catch (err) {
-            console.error("Error fetching roles/customers:", err);
+            console.error('Error fetching roles/customers:', err);
             setError(err);
             setRoles([]);
             setCustomers([]);
         } finally {
             setLoading(false);
         }
-    }, [selectedCubeId, pageSize, currentPage]);
+    }, [pageSize, currentPage, selectedCubeId]);
 
     useEffect(() => {
         const pageToFetch = parseInt(searchParams.get('pageNumber')) || 1;
+        console.log('DEBUG: selectedCubeId before fetch:', selectedCubeId); // Debug log
         fetchRolesAndCustomers(pageToFetch);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedCubeId, searchParams.get('pageNumber'), pageSize]); // Simplified deps, fetch on filter or page change
@@ -85,6 +90,10 @@ function RoleListPage() {
         const params = { pageNumber: 1, pageSize };
         if (newCubeId) params.cubeIdPk = newCubeId;
         setSearchParams(params);
+        console.log('DEBUG: handleCustomerFilterChange set selectedCubeId to:', newCubeId); // Debug log
+
+        // Immediately fetch roles with the new filter value
+        fetchRolesAndCustomers(1, newCubeId);
     };
 
     const handleNavigateToAdd = () => {
@@ -105,13 +114,15 @@ function RoleListPage() {
         <div>
             <h1>Roles Management (All)</h1>
             <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+                {/*
                 <div>
                     <label htmlFor="customerFilter" style={{ marginRight: '10px' }}>Filter by Customer:</label>
-                    <select id="customerFilter" value={selectedCubeId} onChange={handleCustomerFilterChange}>
+                    <select id="customerFilter" value={selectedCubeId} onChange={handleCustomerFilterChange} onClick={() => console.log('DEBUG: Customer filter dropdown clicked')}>
                         <option value="">All Customers</option>
                         {customers.map(cust => <option key={cust.cube_id_pk} value={cust.cube_id_pk}>{cust.cube_name} ({cust.cube_id_pk})</option>)}
                     </select>
                 </div>
+                */}
                 <button className="primary" onClick={handleNavigateToAdd}>
                     Add New Role
                 </button>

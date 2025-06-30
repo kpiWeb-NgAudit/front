@@ -25,6 +25,7 @@ const RoleList = ({ roles, onEdit, onDelete, loading, error }) => {
                     <th>Description</th>
                     <th>Cube Write</th>
                     <th>Measures AllowSet</th>
+                    <th>Customer ID</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -36,6 +37,7 @@ const RoleList = ({ roles, onEdit, onDelete, loading, error }) => {
                         <td>{role.role_description}</td>
                         <td>{displayBool(role.role_cubewriteallow)}</td>
                         <td>{displayBool(role.role_measures_allowset)}</td>
+                        <td>{role.cube_id_pk}</td>
                         <td className="actions">
                             <button className="secondary" onClick={() => onEdit(role)}>Edit</button>
                             <button className="danger" onClick={() => onDelete(role.role_id_pk)}>Delete</button>

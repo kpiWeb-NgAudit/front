@@ -91,3 +91,13 @@ export const deleteCubeset = async (id) => {
         throw error;
     }
 };
+
+export const getCubesetsByCustomer = async (cubeIdPk) => {
+    try {
+        const response = await axios.get(`${API_BASE_URL}`, { params: { cubeIdPk } });
+        return response.data;
+    } catch (error) {
+        console.error(`cubesetService: Error fetching cubesets for customer ${cubeIdPk}:`, error.response?.data || error.message);
+        throw error;
+    }
+};

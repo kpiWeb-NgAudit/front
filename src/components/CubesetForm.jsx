@@ -7,13 +7,18 @@ import {
     getDropdownOptions
 } from '../constants/cubesetEnums';
 import { getAllCustomers } from '../api/customerService';
-import { getNextPresOrder } from '../api/cubesetService';
+import { getNextPresOrder, getCubesetsByCustomer } from '../api/cubesetService';
 
 
 // Helper for consistent key transformation from snake_case (backend) to PascalCase (form state)
+const specialCaseMap = {
+    cubeset_cubename: 'CubesetCubeName',
+    // Add more special cases if needed
+};
+
 const snakeToPascal = (str) => {
     if (!str) return str;
-
+    if (specialCaseMap[str]) return specialCaseMap[str];
     // Gère les cas spéciaux comme _pk à la fin
     if (str.toLowerCase().endsWith("_pk")) {
         const prefix = str.substring(0, str.length - 3);
@@ -40,6 +45,7 @@ const snakeToPascal = (str) => {
 const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isEditMode = false }) => {
     const [customers, setCustomers] = useState([]);
     const [loadingCustomers, setLoadingCustomers] = useState(false);
+    const [usedPresOrders, setUsedPresOrders] = useState([]);
 
     // getInitialFormState is memoized based on parentCubeIdPk.
     // Its reference changes only if parentCubeIdPk changes.
@@ -96,21 +102,22 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
 
     // <<< 2. NOUVELLE FONCTION POUR GÉRER LE CHANGEMENT DE CLIENT >>>
     const handleCustomerChange = async (selectedCubeId) => {
-        // Mettre à jour immédiatement la valeur du client dans le formulaire
         setFormData(prev => ({ ...prev, CubeIdPk: selectedCubeId, CubesetPresOrder: 0 }));
 
-        // Si un client est sélectionné (et non l'option vide "Select Customer")
         if (selectedCubeId) {
             try {
-                // Appeler le nouvel endpoint pour obtenir le prochain numéro d'ordre
                 const nextOrder = await getNextPresOrder(selectedCubeId);
-                // Mettre à jour le champ "Presentation Order" avec la valeur suggérée
                 setFormData(prev => ({ ...prev, CubesetPresOrder: nextOrder }));
+                // Fetch all cubesets for this customer to get used Presentation Orders
+                const cubesets = await getCubesetsByCustomer(selectedCubeId);
+                setUsedPresOrders(cubesets.map(cs => parseInt(cs.cubeset_presorder, 10)));
             } catch (error) {
                 console.warn("Could not fetch next presentation order. User must enter it manually.");
-                // Optionnel: informer l'utilisateur qu'il doit saisir manuellement
                 setErrors(prev => ({...prev, CubesetPresOrder: "Could not fetch next order. Please enter manually."}));
+                setUsedPresOrders([]);
             }
+        } else {
+            setUsedPresOrders([]);
         }
     };
 
@@ -191,6 +198,21 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
         // itself becomes a new function, signaling that the base structure of the form data needs to be re-evaluated.
     }, [initialData, isEditMode, parentCubeIdPk, getInitialFormState]);
 
+    // On mount or when editing, fetch used presentation orders for the current customer
+    useEffect(() => {
+        const fetchUsedPresOrders = async () => {
+            const customerId = isEditMode ? (initialData.cube_id_pk || initialData.CubeIdPk) : parentCubeIdPk;
+            if (customerId) {
+                try {
+                    const cubesets = await getCubesetsByCustomer(customerId);
+                    setUsedPresOrders(cubesets.map(cs => parseInt(cs.cubeset_presorder, 10)));
+                } catch {
+                    setUsedPresOrders([]);
+                }
+            }
+        };
+        fetchUsedPresOrders();
+    }, [isEditMode, initialData, parentCubeIdPk]);
 
     const validate = () => {
         const newErrors = {};
@@ -214,6 +236,14 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
         } else {
             const order = parseInt(formData.CubesetPresOrder, 10);
             if (order < 0) newErrors.CubesetPresOrder = 'Presentation Order cannot be negative.';
+            if (order === 0) newErrors.CubesetPresOrder = 'Presentation Order cannot be zero. Please enter a value greater than zero.';
+            // Check for duplicate Presentation Order (except for current cubeset in edit mode)
+            if (
+                usedPresOrders.includes(order) &&
+                (!isEditMode || order !== parseInt(initialData.cubeset_presorder, 10))
+            ) {
+                newErrors.CubesetPresOrder = 'This Presentation Order is already used for this customer. Please choose another.';
+            }
         }
 
         if (!formData.CubeIdPk) newErrors.CubeIdPk = 'Parent Customer ID is required.';
@@ -273,32 +303,43 @@ const CubesetForm = ({ onSubmit, onCancel, initialData = {}, parentCubeIdPk, isE
             await onSubmit(submissionData);
             // Parent component (Add/Edit Page or Manager) typically handles onCancel/navigation.
         } catch (error) {
-            const errorMsg = error.response?.data?.message || // For generic string messages from backend (less common with ModelState)
+            let errorMsg = error.response?.data?.message || // For generic string messages from backend (less common with ModelState)
                 error.response?.data?.title ||   // For ProblemDetails title
                 error.message ||
                 'Submission failed.';
-            let currentErrors = { form: errorMsg }; // General form error
-
+            // Custom handling for unique constraint violation
+            let currentErrors = { form: errorMsg };
+            let isPresOrderUniqueError = false;
+            if (
+                errorMsg &&
+                (errorMsg.toLowerCase().includes('unique key constraint') ||
+                 errorMsg.toLowerCase().includes('duplicate key') ||
+                 errorMsg.toLowerCase().includes('presorder'))
+            ) {
+                errorMsg = "Presentation Order must be unique for each customer. Please choose a different value.";
+                currentErrors = { ...currentErrors, CubesetPresOrder: errorMsg };
+                isPresOrderUniqueError = true;
+            }
             if (error.response?.data?.errors) { // This is for ASP.NET Core ModelState errors
                 console.log("Backend validation errors received:", error.response.data.errors);
                 const backendFieldErrors = {};
                 for (const keyInError in error.response.data.errors) {
-                    // Backend error keys might be PascalCase (matching DTO) or camelCase
-                    // Ensure your snakeToPascal or a similar utility maps them correctly to form field state keys
-                    // For simplicity, assuming backend error keys might match DTO PascalCase directly
-                    // or be easily transformed.
                     let formKey = keyInError;
-                    // If backend returns "dto.CubesetPresOrder" or "CubesetPresOrder"
                     if (keyInError.toLowerCase().includes("cubesetpresorder")) formKey = "CubesetPresOrder";
                     else if (keyInError.toLowerCase().includes("cubesetname")) formKey = "CubesetName";
                     else if (keyInError.toLowerCase().includes("cubesetidpk")) formKey = "CubesetIdPk";
-                    // Add more specific mappings if needed or use a robust snakeToPascal/camelToPascal
-
                     backendFieldErrors[formKey] = error.response.data.errors[keyInError].join(', ');
                 }
                 currentErrors = { ...currentErrors, ...backendFieldErrors };
             }
             setErrors(currentErrors);
+            // Auto-focus Presentation Order field if unique constraint error
+            if (isPresOrderUniqueError) {
+                setTimeout(() => {
+                    const presOrderInput = document.getElementById('CubesetPresOrderForm');
+                    if (presOrderInput) presOrderInput.focus();
+                }, 100);
+            }
         }
 
     };

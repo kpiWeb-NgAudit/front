@@ -9,8 +9,15 @@ import {
 import { getAllCustomers } from '../api/customerService';
 
 // Helper function (can be in a utils file)
+const specialCaseMap = {
+    fact_shortcubename: 'FactShortCubeName',
+    fact_shortpresname: 'FactShortPresName',
+    // Add more special cases if needed
+};
+
 const snakeToPascal = (str) => {
     if (!str) return str;
+    if (specialCaseMap[str]) return specialCaseMap[str];
     if (str.toLowerCase().endsWith("_pk")) {
         const prefix = str.substring(0, str.length - 3);
         return prefix.split('_')

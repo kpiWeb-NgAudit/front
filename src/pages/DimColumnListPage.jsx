@@ -70,7 +70,23 @@ function DimColumnListPage() {
                 fetchData();
             }
         } catch (err) {
-            alert(`Error deleting dimension column: ${err.response?.data?.message || err.message}`);
+            const backendMsg = err.response?.data?.message || err.response?.data || err.message;
+            const blockingHierarchies = err.response?.data?.blockingHierarchies;
+            if (
+                backendMsg &&
+                (backendMsg.toLowerCase().includes('referenced by other records') ||
+                 backendMsg.toLowerCase().includes('cannot delete'))
+            ) {
+                let msg = 'This column cannot be deleted because it is used by other records (such as hierarchies, facts, etc.).';
+                if (blockingHierarchies && blockingHierarchies.length > 0) {
+                    msg += '\n\nBlocking hierarchies:\n' +
+                        blockingHierarchies.map(h => `- ${h.hierarchyName} (ID: ${h.hierarchyId})`).join('\n');
+                }
+                msg += '\nPlease remove those references first.';
+                alert(msg);
+            } else {
+                alert(`Error deleting dimension column: ${backendMsg}`);
+            }
         }
     };
 
