@@ -8,7 +8,7 @@ function HomePage() {
         <div className="home-container">
             <header className="home-header">
                 <h1>Welcome to KPI Web Management</h1>
-                <p>Your central hub for managing Facts and Customers.</p>
+                <p>Your central hub for managing Cubes.</p>
             </header>
 
             <nav className="home-navigation">
