@@ -26,16 +26,30 @@ const PerspectiveForm = ({ onSubmit, onCancel, initialData: initialDataProp = {}
         console.log("PerspectiveForm: useState initializer. isEditMode:", isEditMode, "parentCubeIdPk:", parentCubeIdPk, "initialData (memoized):", initialData);
         let stateToInitialize = getInitialFormState();
         if (isEditMode && initialData && Object.keys(initialData).length > 0) {
-            // ... (population logic from initialData for EDIT mode) ...
-            // This part is for the very first render if isEditMode is true
-            for (const backendKey in initialData) { /* ... map ... */ }
+            // If editing, populate stateToInitialize from initialData
+            stateToInitialize = { ...stateToInitialize }; // Start with base, then override
+            for (const backendKey in initialData) {
+                if (initialData.hasOwnProperty(backendKey)) {
+                    const formKey = snakeToPascal(backendKey);
+                    if (stateToInitialize.hasOwnProperty(formKey)) {
+                        const value = initialData[backendKey];
+                        if (value === null || typeof value === 'undefined') { stateToInitialize[formKey] = ''; }
+                        else if (typeof value === 'number') { stateToInitialize[formKey] = String(value); }
+                        else if (formKey === 'PerspTimestamp' && value) { stateToInitialize[formKey] = value; }
+                        else { stateToInitialize[formKey] = value; }
+                    }
+                }
+            }
             if (initialData.perspIdPk !== undefined) stateToInitialize.PerspIdPk = String(initialData.perspIdPk);
-            // ... etc. for other PKs/FKs from initialData
+            else if (initialData.persp_id_pk !== undefined) stateToInitialize.PerspIdPk = String(initialData.persp_id_pk);
+            if (initialData.cubeIdPk !== undefined) stateToInitialize.CubeIdPk = String(initialData.cubeIdPk);
+            else if (initialData.cube_id_pk !== undefined) stateToInitialize.CubeIdPk = String(initialData.cube_id_pk);
         } else if (!isEditMode && initialData && Object.keys(initialData).length > 0 && Object.keys(initialData).some(k => initialData[k])) {
             // Create mode with actual pre-fill data in initialData (not just an empty object)
             stateToInitialize = { ...stateToInitialize, ...initialData };
             if (parentCubeIdPk) stateToInitialize.CubeIdPk = parentCubeIdPk;
         }
+        console.log("PerspectiveForm: FINAL formData after init:", stateToInitialize);
         return stateToInitialize;
     });
     const [errors, setErrors] = useState({});
@@ -77,7 +91,7 @@ const PerspectiveForm = ({ onSubmit, onCancel, initialData: initialDataProp = {}
             newTargetState = { ...newTargetState }; // Start with base, then override
             for (const backendKey in initialData) {
                 if (initialData.hasOwnProperty(backendKey)) {
-                    const formKey = initialData.hasOwnProperty(snakeToPascal(backendKey)) ? snakeToPascal(backendKey) : backendKey;
+                    const formKey = snakeToPascal(backendKey);
                     if (newTargetState.hasOwnProperty(formKey)) {
                         const value = initialData[backendKey];
                         if (value === null || typeof value === 'undefined') { newTargetState[formKey] = ''; }
