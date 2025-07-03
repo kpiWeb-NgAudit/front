@@ -174,6 +174,15 @@ function HomePage() {
                     <p>View all permission settings for roles on dimension columns.</p>
                 </Link>
 
+                {/* On peut créer une nouvelle "section" visuelle ou simplement l'ajouter */}
+                <hr style={{ width: '100%', borderTop: '1px solid #ddd' }} />
+
+                <Link to="/engine/check-datamart" className="nav-card" style={{ backgroundColor: '#fff0e6' }}>
+                    <div className="nav-card-icon">⚙️🔍</div>
+                    <h2>Check Datamart</h2>
+                    <p>Verify integrity, compute CRCs, and create indexes for the datamart.</p>
+                </Link>
+
 
 
             </nav>

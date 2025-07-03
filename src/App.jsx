@@ -64,6 +64,7 @@ import FactDbExtractV2ListPage from "./pages/FactDbExtractV2ListPage.jsx";
 import RoleDimcolListPage from "./pages/RoleDimcolListPage.jsx";
 import DimColumnListPage from "./pages/DimColumnListPage.jsx";
 import EditDimColumnPage from "./pages/EditDimColumnPage.jsx";
+import CheckDatamartPage from "./pages/CheckDatamartPage.jsx";
 
 
 
@@ -181,6 +182,9 @@ function App() {
                     <Route path="/fact-db-extracts" element={<FactDbExtractV2ListPage />} />
 
                     <Route path="/role-dimcol-permissions" element={<RoleDimcolListPage />} />
+
+                    <Route path="/engine/check-datamart" element={<CheckDatamartPage />} />
+
 
 
 
