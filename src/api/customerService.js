@@ -8,15 +8,21 @@ const API_BASE_URL = `${BASE_URL}/api/customer`;
 // Dans src/api/customerService.js
 
 export const getAllCustomers = async () => {
-    console.log("customerService: Calling GET /api/customers (no limit)");
+    console.log("customerService: Calling GET /api/customer to fetch all customers.");
     try {
-        // On fait un appel simple sans aucun paramètre pour tout récupérer
+        // On fait un appel simple sans paramètre pour tout récupérer
         const response = await axios.get(API_BASE_URL);
-        console.log(`[API RESPONSE] Received ${response.data.length} customers.`);
-        return response.data;
+
+        // <<< CORRECTION CLÉ ICI >>>
+        // On s'assure de toujours retourner un tableau.
+        // Si response.data est undefined, null, ou autre chose, on retourne un tableau vide.
+        return Array.isArray(response.data) ? response.data : [];
+
     } catch (error) {
         console.error("customerService: Error in getAllCustomers:", error.response?.data || error.message);
-        throw error;
+        // En cas d'erreur, on retourne aussi un tableau vide pour que le code
+        // qui appelle cette fonction ne plante pas.
+        return [];
     }
 };
 

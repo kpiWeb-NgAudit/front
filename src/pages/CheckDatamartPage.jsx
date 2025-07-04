@@ -1,34 +1,32 @@
-// src/pages/CheckDatamartPage.jsx
-
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import engineService from '../api/Engine/engineService';
 import { getAllCustomers } from '../api/customerService';
 
-// Un petit composant helper pour la bannière de statut final
-const StatusBanner = ({ status }) => {
+// Le composant StatusBanner reste le même.
+
+const StatusBanner = ({ status, customMessage }) => {
     if (!status) return null;
 
-    const statusConfig = {
+    const config = {
         success: {
             className: 'alert-success',
             icon: '✅',
-            message: 'Task completed successfully.'
+            defaultMessage: 'The task has terminated successfully.'
         },
         error: {
             className: 'alert-danger',
             icon: '❌',
-            message: 'Task finished with errors or warnings. Please check the logs.'
+            defaultMessage: 'Task finished with errors or warnings. Please check the logs.'
         }
-    };
+    }[status];
 
-    const config = statusConfig[status];
     if (!config) return null;
 
     return (
-        <div className={`alert ${config.className} d-flex align-items-center mt-4`} role="alert">
+        <div className={`alert ${config.className} d-flex align-items-center`} role="alert">
             <span className="me-2" style={{ fontSize: '1.5rem' }}>{config.icon}</span>
             <div>
-                <strong>{config.message}</strong>
+                <strong>{customMessage || config.defaultMessage}</strong>
             </div>
         </div>
     );
@@ -36,118 +34,94 @@ const StatusBanner = ({ status }) => {
 
 
 function CheckDatamartPage() {
-    const [outputLines, setOutputLines] = useState([]);
+    const [output, setOutput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [apiError, setApiError] = useState(''); // Pour les erreurs de communication
+    const [apiError, setApiError] = useState(''); // Erreur de communication API
     const [finalStatus, setFinalStatus] = useState(null); // 'success' ou 'error'
 
     const [customers, setCustomers] = useState([]);
     const [selectedCube, setSelectedCube] = useState('');
 
-    // Référence à la div des logs pour le scroll automatique
-    const logContainerRef = useRef(null);
-    // Référence pour l'intervalle afin de pouvoir l'annuler proprement
-    const intervalRef = useRef(null);
+    // Dans CheckDatamartPage.jsx, à l'intérieur du useEffect
 
-    // Effet pour scroller vers le bas à chaque nouvelle ligne
-    useEffect(() => {
-        if (logContainerRef.current) {
-            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-        }
-    }, [outputLines]);
-
-    // Effet pour charger les clients une seule fois
     useEffect(() => {
         const fetchCustomers = async () => {
             try {
+                // L'appel est maintenant garanti de retourner un tableau.
                 const customerData = await getAllCustomers();
-                setCustomers(customerData || []);
+                setCustomers(customerData); // Pas besoin de `|| []` ici.
             } catch (err) {
-                setApiError('Failed to load the customer list.');
+                // Ce catch ne devrait plus être atteint si le service gère déjà l'erreur,
+                // mais c'est une bonne sécurité.
+                setApiError('Failed to load customer list for the filter.');
+                setCustomers([]); // Assurer que c'est un tableau vide en cas d'erreur inattendue.
             }
         };
         fetchCustomers();
     }, []);
 
-    // Effet de nettoyage pour s'assurer que l'intervalle est arrêté si le composant est démonté
-    useEffect(() => {
-        return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-            }
-        };
-    }, []);
-
     const analyzeOutput = (logText) => {
         if (!logText) return 'error';
-
         const successPattern = /The task has terminated successfully/i;
         const errorPattern = /ERROR:|KPIW-\d{4}|Error-\d{4}/i;
 
-        if (errorPattern.test(logText)) {
-            return 'error';
-        }
-        if (successPattern.test(logText)) {
-            return 'success';
-        }
+        if (errorPattern.test(logText)) return 'error';
+        if (successPattern.test(logText)) return 'success';
 
-        // Par défaut, si la phrase de succès n'est pas trouvée, c'est une erreur.
+
+        if (/Warning-\d{4}/i.test(logText)) return 'error';
+
         return 'error';
     };
 
-    const streamOutput = (fullLog) => {
-        const lines = fullLog.split('\n');
-        let currentLine = 0;
+    // Dans CheckDatamartPage.jsx
 
-        // Arrêter un intervalle précédent s'il existe
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-        }
-
-        intervalRef.current = setInterval(() => {
-            if (currentLine < lines.length) {
-                setOutputLines(prevLines => [...prevLines, lines[currentLine]]);
-                currentLine++;
-            } else {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-                setFinalStatus(analyzeOutput(fullLog));
-                setIsLoading(false);
-            }
-        }, 50); // Délai en ms entre chaque ligne
-    };
+    // Dans src/pages/CheckDatamartPage.jsx
 
     const handleRunCheckDatamart = async () => {
+        // Réinitialisation
         setIsLoading(true);
         setApiError('');
-        setOutputLines([]);
         setFinalStatus(null);
-
-        const commandText = selectedCube
-            ? `-checkdmart ${selectedCube}`
-            : '-checkdmart (for all cubes)';
-        setOutputLines([`> Starting engine command: ${commandText}...`]);
+        setOutput('');
 
         try {
             const result = await engineService.runCheckDatamart(selectedCube);
-            streamOutput(result);
+            setOutput(result);
+            setFinalStatus(analyzeOutput(result));
         } catch (err) {
-            setApiError(err.message || 'An unknown API error occurred.');
-            setOutputLines(prev => [...prev, '\n--- API COMMUNICATION FAILED ---']);
+            // <<< GESTION D'ERREUR SIMPLIFIÉE ET SÛRE >>>
+            // `err` est maintenant GARANTI d'être un objet Error avec une propriété .message
+            // grâce à notre service blindé.
+            const errorMessage = err.message;
+
+            setApiError(errorMessage);
+            setOutput(`--- COMMAND FAILED ---\n\n${errorMessage}`);
             setFinalStatus('error');
+        } finally {
             setIsLoading(false);
         }
     };
+
+    // <<< CORRECTION 2 : Gérer le formatage des logs >>>
+    // On utilise useMemo pour ne recalculer le formatage que si 'output' change.
+    const formattedOutput = useMemo(() => {
+        // Remplace les sauts de ligne Windows (\r\n) et Unix (\n) par des éléments <br />
+        // mais c'est déjà géré par `white-space: pre-wrap` dans le style de la balise <pre>.
+        // Le simple fait d'afficher le texte dans une balise <pre> ou <code> suffit.
+        return output;
+    }, [output]);
 
     return (
         <div className="container mt-4">
             <h2>Check Datamart Integrity</h2>
             <p>
-                This action runs the <code>-checkdmart</code> command. You can run it for a specific customer
-                or for the entire datamart by leaving the filter empty.
+                Run the <code>-checkdmart</code> command. You can run it for a specific customer
+                or for the entire datamart.
             </p>
 
             <div className="card card-body mb-4">
+                {/* Le formulaire ne change pas */}
                 <div className="row align-items-end">
                     <div className="col-md-8">
                         <label htmlFor="customerFilterCheckDmart" className="form-label">
@@ -174,42 +148,32 @@ function CheckDatamartPage() {
                             onClick={handleRunCheckDatamart}
                             disabled={isLoading}
                         >
-                            {isLoading ? (
-                                <>
-                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                    {' '}Running...
-                                </>
-                            ) : (
-                                'Run Command'
-                            )}
+                            {isLoading ? 'Running...' : 'Run Command'}
                         </button>
                     </div>
                 </div>
             </div>
 
-            <StatusBanner status={finalStatus} />
+            {/* <<< CORRECTION 1 : AFFICHAGE DU STATUT FINAL >>> */}
+            {/* On n'affiche la bannière de statut que si le processus n'est pas en cours */}
+            {!isLoading && <StatusBanner status={finalStatus} />}
 
+            {/* La bannière d'erreur API est séparée */}
             {apiError && (
                 <div className="alert alert-danger mt-4">
-                    <strong>API Error:</strong> {apiError}
+                    <strong>API Communication Error:</strong> {apiError}
                 </div>
             )}
 
-            {outputLines.length > 0 && (
+            {/* Affiche les logs bruts si la variable output n'est pas vide */}
+            {output && (
                 <div className="card mt-4">
-                    <div className="card-header fw-bold">
-                        Engine Output
-                    </div>
-                    <div
-                        className="card-body bg-dark text-white p-3 rounded-bottom"
-                        ref={logContainerRef}
-                        style={{ height: '400px', overflowY: 'auto', fontFamily: 'monospace', fontSize: '0.875em' }}
-                    >
-                        {outputLines.map((line, index) => (
-                            <div key={index} style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
-                                {line}
-                            </div>
-                        ))}
+                    <div className="card-header">Engine Output</div>
+                    <div className="card-body">
+                        {/* La balise <pre> avec le style 'pre-wrap' est la clé pour le formatage */}
+                        <pre className="bg-dark text-white p-3 rounded" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all', maxHeight: '500px', overflowY: 'auto' }}>
+                            <code>{formattedOutput}</code>
+                        </pre>
                     </div>
                 </div>
             )}
